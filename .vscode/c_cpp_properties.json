@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "avr-gcc",
+            "includePath": [
+                "${workspaceFolder}/counter/code/**",
+                "${workspaceFolder}/test/code/**"
+            ],
+            "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",
+            "defines": [
+                "__AVR_ATmega16__",
+                "F_CPU = 8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
