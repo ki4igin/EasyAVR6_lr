@@ -12,22 +12,20 @@
 #include <avr/io.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
-
 #include "main.h"
-#include "semseg.h"
+#include "sevseg.h"
 
 struct user_flags
 {
-    btn_on : 1;
+    uint8_t btn_on : 1;
 };
 
 int main(void)
 {
-    struct user_flags flags = {0};  // Переменная пользовательских флагов
+    struct user_flags flags = {0};
 
-    uint16_t count = {0};  // 16-битный счетчик
-    uint8_t buf[4] = {0};  // Буфер для хранения 4-х разрядного числа для
-                           // вывода на семисегментные индикаторы
+    uint16_t cnt = {0};
+    uint8_t digs[4] = {0};
 
     /**
      * Инициализация портов 
@@ -36,8 +34,7 @@ int main(void)
     DDRA = 0x00;
     PORTA = 0xFF;
 
-    /* Инициализация семисегментных индикаторов */
-    SemsegInit();
+    sevseg_init();
 
     while (1)
     {
@@ -49,7 +46,7 @@ int main(void)
         if ((PINA & (1 << PINA0)) == 0 && flags.btn_on == 0)
         {
             flags.btn_on = 1;
-            count = (count < 9999) ? count + 1 : 0;
+            cnt = (cnt < 9999) ? cnt + 1 : 0;
         }
         else
         {
@@ -63,12 +60,14 @@ int main(void)
          * Преобразование значения счетчика в 4-х разрядное двоично-десятичное
          * число (размерность буфера для числа должна строго равняться 4)
          */
-        SemsegBin2Bcd(count, buf, sizeof(buf));
+        sevseg_bin2bcd(cnt, digs);
+
         /**
          * Отображение на 4-х семисегментных индикаторах 4-х разрядного числа
          * (размерность буфера для числа должна строго равняться 4)
          */
-        SemsegDisp(buf, sizeof(buf));
+        sevseg_disp(digs);
     }
 }
+
 /* End File */
