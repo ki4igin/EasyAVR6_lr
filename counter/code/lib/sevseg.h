@@ -5,7 +5,7 @@
 
 void sevseg_init(void);
 void sevseg_bin2bcd(uint16_t data, uint8_t *digs);
-void sevseg_disp(uint8_t *digs);
+void sevseg_disp(const uint8_t *digs);
 void sevseg_off(void);
 
 #endif

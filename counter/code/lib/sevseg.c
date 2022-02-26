@@ -85,7 +85,7 @@ void sevseg_bin2bcd(uint16_t data, uint8_t *digs)
  * 
  * \param digs  указатель на 4-х байтное двоично-десятичное число
  */
-void sevseg_disp(uint8_t *digs)
+void sevseg_disp(const uint8_t *digs)
 {
     /* Выключение отображения на семисегментных индикаторах */
     DATA_PORT = 0x00;
