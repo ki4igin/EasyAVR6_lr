@@ -4,7 +4,7 @@
  * Board:   EasyAVR6;
  * Clock:   int.clock 8 MHz
  * 
- * Программа по нажатию кнопки Up (PA0) увеличивает значение счетчика на 1.
+ * Программа по нажатию кнопки "Вверх" (PA0) инкрементирует значение счетчика.
  * Счетчик изменяет свое значение от 0 до 9999.
  * Значение счетчика отображается на 4-х семисегментных индикаторах
  */
@@ -17,20 +17,17 @@
 
 struct user_flags
 {
-    uint8_t btn_on : 1;
+    uint8_t is_btn_lock : 1;
 };
 
 int main(void)
 {
     struct user_flags flags = {0};
 
-    uint16_t cnt = {0};
-    uint8_t digs[4] = {0};
+    uint16_t counter = {0};
+    uint8_t digits[4] = {0};
 
-    /**
-     * Инициализация портов 
-     * PA0...PA7 - входы c PullUp
-     */
+    /* PA0...PA7 - входы c PullUp */
     DDRA = 0x00;
     PORTA = 0xFF;
 
@@ -38,35 +35,21 @@ int main(void)
 
     while (1)
     {
-        /**
-         * Если PA0 нажата (активный уровень низкий) и флаг btn_on сброшен,
-         * то инкрементируем счетчик,
-         * иначе сбрасываем флаг btn_on
-         */
-        if ((PINA & (1 << PINA0)) == 0 && flags.btn_on == 0)
+        if ((PINA & (1 << PINA0)) == 0 && flags.is_btn_lock == 0)
         {
-            flags.btn_on = 1;
-            cnt = (cnt < 9999) ? cnt + 1 : 0;
+            flags.is_btn_lock = 1;
+            counter = (counter < 9999) ? counter + 1 : 0;
         }
         else
         {
-            flags.btn_on = 0;
+            flags.is_btn_lock = 0;
         }
 
         /* Задержка вывода на семисегментные индикаторы */
         _delay_us(1000);
 
-        /**
-         * Преобразование значения счетчика в 4-х разрядное двоично-десятичное
-         * число (размерность буфера для числа должна строго равняться 4)
-         */
-        sevseg_bin2bcd(cnt, digs);
-
-        /**
-         * Отображение на 4-х семисегментных индикаторах 4-х разрядного числа
-         * (размерность буфера для числа должна строго равняться 4)
-         */
-        sevseg_disp(digs);
+        sevseg_bin2bcd(counter, digits);
+        sevseg_display_process(digits);
     }
 }
 
