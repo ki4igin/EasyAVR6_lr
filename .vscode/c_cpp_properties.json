@@ -4,6 +4,7 @@
             "name": "avr-gcc",
             "includePath": [
                 "${workspaceFolder}/counter/code/**",
+                "${workspaceFolder}/timers/code/**",
                 "${workspaceFolder}/test/code/**"
             ],
             "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",

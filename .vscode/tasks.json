@@ -32,6 +32,20 @@
             "problemMatcher": []
         },
         {
+            "label": "build timers",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "timers",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build test",
             "type": "shell",
             "command": "make",
