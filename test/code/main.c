@@ -36,4 +36,7 @@ int main(void)
         PORTA_BITS.P0 = 1;
     }
 }
+
+timer
+
 /* End File */
