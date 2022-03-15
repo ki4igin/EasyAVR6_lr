@@ -23,18 +23,35 @@
 
 DEF_REG_BITS(PORTA_BITS, &PORTA, P7, P6, P5, P4, P3, P2, P1, P0)
 
+#define concat(a, b)    a##b
+#define macro_var(name) concat(name, __LINE__)
 
-
-
+#define defer(start, end) for (      \
+    int macro_var(_i_) = (start, 0); \
+    !macro_var(_i_);                 \
+    (macro_var(_i_) += 1), end)
 
 // #define PORTA_BITS ((volatile struct PORTA_bits *)&PORTA)
+
+void begin(void)
+{
+    PORTA = 0xFF;
+}
+
+void end(void)
+{
+    PORTA = 0x00;
+}
 
 int main(void)
 {
     // Основной цикл
 
-    PORTA_BITS.P0 = 0;
-    PORTA_BITS.ALL = 5;
+    defer(begin(), end())
+    {
+        PORTA_BITS.P0 = 0;
+        PORTA_BITS.ALL = 5;
+    }
 
     timer_init(0xFA);
 
