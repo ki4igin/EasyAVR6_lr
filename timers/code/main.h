@@ -4,9 +4,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "sevseg.h"
-#include "timer.h"
-
 struct user_flags
 {
     uint8_t is_btn_lock : 1;

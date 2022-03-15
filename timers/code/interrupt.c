@@ -1,13 +1,13 @@
-#include <avr/io.h>         
-#include <avr/interrupt.h>  
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 #include "main.h"
-#include "sevseg.h"  
-#include "timer.h"   
+#include "sevseg.h"
+#include "timer.h"
 
 /* Прерывание используется для обработки нажатий кнопок */
 ISR(TIMER2_OVF_vect)
-{    
+{
     if ((PIND & (1 << PIND0)) == 0)
     {
         OCR1BL++;
@@ -47,7 +47,7 @@ ISR(TIMER0_OVF_vect)
     timer_inc();
 
     uint8_t kd = OCR1BL * 100 / 256;
-    uint8_t digits[4];  
+    uint8_t digits[4];
 
     sevseg_bin2bcd(kd, digits);
     sevseg_display_process(digits);

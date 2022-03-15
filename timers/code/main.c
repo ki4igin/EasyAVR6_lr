@@ -15,6 +15,8 @@
  */
 
 #include "main.h"
+#include "sevseg.h"
+#include "timer.h"
 
 struct user_flags flags = {0};
 
@@ -24,7 +26,7 @@ int main(void)
      * PA0...PA7 - выходы (к ним подключены светодиоды, зажигаем светодиод PA3)
      * PD0...PD1, PB5...PB7 - входы c PullUp (к ним подключены кнопки)
      */
-    DDRA  = 0xFF;
+    DDRA = 0xFF;
     PORTA = (1 << PA3);
     PORTD |= (1 << PD1) | (1 << PD0);
     PORTB |= (1 << PB7) | (1 << PB6) | (1 << PB5);

@@ -34,7 +34,6 @@ void timer_inc(void)
 
 __attribute__((weak)) void timer_comp(void)
 {
-
 }
 
 /* End File */
