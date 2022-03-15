@@ -8,7 +8,7 @@ extern uint8_t timer_ocr;  // Значение в блоке сравнения 
 void timer_init(uint8_t ocr);
 void timer_inc(void);
 
-__attribute__((weak)) void timer_comp(void);
+void timer_comp(void);
 
 #endif
 
