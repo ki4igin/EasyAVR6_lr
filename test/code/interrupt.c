@@ -10,10 +10,10 @@ ISR(INT0_vect)
 
 ISR(INT1_vect)
 {
-    timer_inc();  // User code
+    timer1_inc();  // User code
 }
 
-void timer_comp(void)
+void timer1_comp(void)
 {
     PORTB = ~PORTB;
 }

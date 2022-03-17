@@ -52,11 +52,27 @@ struct reg
     uint8_t pin;
 };
 
-#define cstr(str) str[sizeof(str)]    
+#define cstr(str) str[sizeof(str)]
 
 #define add_line(message) concat(name, __LINE__)
 #define get_str(message)  #message
-uint8_t s[] = cstr;
+// uint8_t s[] = cstr;
+
+#define COLORS \
+    X(RED)     \
+    X(BLACK)   \
+    X(WHITE)   \
+    X(BLUE)
+
+// Creating an enum of colors
+// by macro expansion.
+enum colors
+{
+#define X(value) value,
+    X(RED) X(BLACK) X(WHITE) X(BLUE)
+#undef X
+};
+
 #define WARN_IF(EXP)                                \
     do                                              \
     {                                               \
@@ -77,7 +93,7 @@ int main(void)
         PORTA_BITS.ALL = 5;
     }
 
-    timer_init(0xFA);
+    timer1_init(0xFA);
 
     struct reg rega = {
         .ddr = DDRA,
@@ -86,14 +102,14 @@ int main(void)
 
     while (1)
     {
-        timer_inc();
+        timer1_inc();
         PORTA_BITS.P0 = 0;
         PORTA_BITS.P0 = 1;
         PORTA = rega.port;
     }
 }
 
-__attribute__((weak)) void timer_comp(void)
+__attribute__((weak)) void timer1_comp(void)
 {
     PORTD = ~PORTD;
 }

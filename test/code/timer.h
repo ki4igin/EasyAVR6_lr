@@ -3,12 +3,27 @@
 
 #include <avr/io.h>
 
-extern uint8_t timer_ocr;  // Значение в блоке сравнения програмного таймера
+#define TIMERS \
+    X(1)       \
+    X(2)       \
+    X(3)       \
+    X(4)       \
+    X(5)       \
+    X(6)       \
+    X(7)
 
-void timer_init(uint8_t ocr);
-void timer_inc(void);
+#define X(num)                           \
+                                         \
+    extern uint8_t timer##num##_ocr;     \
+                                         \
+    void timer##num##_init(uint8_t ocr); \
+    void timer##num##_inc(void);         \
+                                         \
+    void timer##num##_comp(void);
 
-void timer_comp(void);
+TIMERS
+
+#undef X
 
 #endif
 
