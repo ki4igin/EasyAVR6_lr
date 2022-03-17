@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
+#include <assert.h>
 
 #include "timer.h"
 
@@ -24,6 +25,7 @@
 DEF_REG_BITS(PORTA_BITS, &PORTA, P7, P6, P5, P4, P3, P2, P1, P0)
 
 #define concat(a, b)    a##b
+#define to_string(a)    #a
 #define macro_var(name) concat(name, __LINE__)
 
 #define defer(start, end) for (      \
@@ -43,6 +45,28 @@ void end(void)
     PORTA = 0x00;
 }
 
+struct reg
+{
+    uint8_t port;
+    uint8_t ddr;
+    uint8_t pin;
+};
+
+#define cstr(str) str[sizeof(str)]    
+
+#define add_line(message) concat(name, __LINE__)
+#define get_str(message)  #message
+uint8_t s[] = cstr;
+#define WARN_IF(EXP)                                \
+    do                                              \
+    {                                               \
+        if (EXP)                                    \
+            fprintf(stderr, "Warning: " #EXP "\n"); \
+    }                                               \
+    while (0)
+
+static_assert(sizeof(get_str(dssd)) == 5, "error");
+
 int main(void)
 {
     // Основной цикл
@@ -55,11 +79,17 @@ int main(void)
 
     timer_init(0xFA);
 
+    struct reg rega = {
+        .ddr = DDRA,
+        .pin = PINA,
+        .port = PORTA};
+
     while (1)
     {
         timer_inc();
         PORTA_BITS.P0 = 0;
         PORTA_BITS.P0 = 1;
+        PORTA = rega.port;
     }
 }
 
