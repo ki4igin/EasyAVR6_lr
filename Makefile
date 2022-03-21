@@ -3,7 +3,7 @@
 ###############################################################################
 GCC_PATH := C:/toolchain/avr8/avr8-gnu-toolchain/bin
 DEBUG := 1
-PROJECTS := counter test timers
+PROJECTS := counter test timers uart
 
 
 ###############################################################################

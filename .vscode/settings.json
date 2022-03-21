@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "инкрементирует",
+        "COMPA",
         "DDRA",
         "PINA",
         "PINB",
@@ -11,6 +12,7 @@
         "TCCR",
         "TIMSK",
         "TOIE",
+        "USART",
         "vect"
     ]
 }

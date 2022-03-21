@@ -46,6 +46,20 @@
             "problemMatcher": []
         },
         {
+            "label": "build uart",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "uart",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build test",
             "type": "shell",
             "command": "make",
