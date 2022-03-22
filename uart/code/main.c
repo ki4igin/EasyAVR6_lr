@@ -21,17 +21,21 @@
  *     2-й байт: текущее состояния на выводах PA0...PA7,
  *     3-й байт: контрольная сумма.
  */
+#include "avr/io.h"
+#include "avr/interrupt.h"
+
 #include "main.h"
+#include "sevseg.h"
 
 // Variables -------------------------------------------------------------------
-uint8_t bufTx[NBUF_TX]  = {0};  // Буфер передачи
-uint8_t bufRx[NBUF_RX]  = {0};  // Буфер приема
+uint8_t bufTx[NBUF_TX] = {0};   // Буфер передачи
+uint8_t bufRx[NBUF_RX] = {0};   // Буфер приема
 uint8_t dataRx[NBUF_RX] = {0};  // Массив принятых данных
 
 Flags_t flags = {0};  // Переменная пользовательских флагов
 
 // Function prototypes ---------------------------------------------------------
-static inline uint8_t CheckSumCalc(uint8_t* pbuf, uint8_t bufSize);
+static inline uint8_t CheckSumCalc(uint8_t *pbuf, uint8_t bufSize);
 
 // Functions -------------------------------------------------------------------
 int main(void)
@@ -71,7 +75,7 @@ int main(void)
     TCCR2 = (1 << CS22) | (1 << CS21);
 
     // Инициализация UART, включение приемника и передатчика
-    // Cкорость обмена: 19200 бод, 8 бит данных, 1 стоп-бит, бит паритета: нет
+    // Скорость обмена: 19200 бод, 8 бит данных, 1 стоп-бит, бит паритета: нет
     // Разрешение прерывания по приему
     // PD0(RXD) - вход с PullUp, PD1(TXD) - выход
     PORTD |= (1 << PD0);
@@ -84,17 +88,12 @@ int main(void)
     UCSRC |= (1 << URSEL) | (1 << UCSZ0) | (1 << UCSZ1);
     UCSRB |= (1 << RXCIE) | (1 << RXEN) | (1 << TXEN);
 
-    // Инициализация семисегментных индикаторов
-    SemsegInit();
+    sevseg_init();
 
-    // Разрешение глобальных прерываний
     sei();
 
-    // Основной цикл
     while (1)
     {
-        // Если флаг tx установлен, то инициируем передачу данных
-        // Если флаг rx установлен, то обрабатываем принятые данные
         if (flags.tx)
         {
             flags.tx = 0;
@@ -103,7 +102,7 @@ int main(void)
             // 1-й байт: 0х80,
             // 2-й байт: текущее состояния на выводах PA0...PA7,
             // 3-й байт: контрольная сумма.
-            uint8_t* pbuf = bufTx;
+            uint8_t *pbuf = bufTx;
 
             *pbuf++ = 0x80;
             *pbuf++ = PINA;
@@ -123,8 +122,8 @@ int main(void)
 
             if (bufRx[NBUF_RX - 1] == checkSum)
             {
-                uint8_t* pbufRx  = bufRx;
-                uint8_t* pdataRx = dataRx;
+                uint8_t *pbufRx = bufRx;
+                uint8_t *pdataRx = dataRx;
                 for (uint8_t i = 0; i < NBUF_RX; i++)
                 {
                     *pdataRx++ = *pbufRx++;
@@ -145,7 +144,7 @@ bufSize:    размер массив
 Возвращаемое значение:
 контрольная сумма
 *******************************************************************************/
-static inline uint8_t CheckSumCalc(uint8_t* pbuf, uint8_t bufSize)
+static inline uint8_t CheckSumCalc(uint8_t *pbuf, uint8_t bufSize)
 {
     uint8_t sum = 0;
     for (uint8_t i = 0; i < bufSize; i++)

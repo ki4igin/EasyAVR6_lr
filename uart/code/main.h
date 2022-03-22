@@ -1,29 +1,24 @@
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
-// Includes --------------------------------------------------------------------
-#include <avr/io.h>         // ������������ ���� ��� ������ � ��� ��
-#include <avr/interrupt.h>  // ������������ ���� ��� ������ � ������������ ��
+#include <avr/io.h>
 
-// Macro -----------------------------------------------------------------------
-#define NBUF_TX 3  // ������ ������ ��������
-#define NBUF_RX 4  // ������ ������ ������
+#define NBUF_TX 3
+#define NBUF_RX 4
 
-// Typedef ---------------------------------------------------------------------
-// ��� ���������������� ������
 typedef struct
 {
-    uint8_t is_btn_lock : 1;  // ���� ������� ������
-    uint8_t rx : 1;     // ���� ������ ������
-    uint8_t tx : 1;     // ���� �������� ������
+    uint8_t is_btn_lock : 1;
+    uint8_t rx : 1;
+    uint8_t tx : 1;
 } Flags_t;
 
-// Variables -------------------------------------------------------------------
-extern uint8_t bufTx[NBUF_TX];   // ����� ��������
-extern uint8_t bufRx[NBUF_RX];   // ����� ������
-extern uint8_t dataRx[NBUF_RX];  // ������ �������� ������
+extern uint8_t bufTx[NBUF_TX];
+extern uint8_t bufRx[NBUF_RX];
+extern uint8_t dataRx[NBUF_RX];
 
-extern Flags_t flags;  // ���������� ���������������� ������
+extern Flags_t flags;
 
 #endif
-// End File --------------------------------------------------------------------
+
+/* End File */
