@@ -19,6 +19,30 @@ extern uint8_t dataRx[NBUF_RX];
 
 extern Flags_t flags;
 
+// extern uint8_t cntTx;
+
+typedef struct
+{
+    union
+    {
+        uint8_t size;
+        uint8_t num;
+    };
+    uint8_t data[3];
+} buf_t;
+
+extern struct
+{
+    union
+    {
+        uint8_t size;
+        uint8_t num;
+    };
+    uint8_t data[3];
+} tx_buf;
+
+// extern struct buffer tx_buf;
+
 #endif
 
 /* End File */

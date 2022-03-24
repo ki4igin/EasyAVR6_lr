@@ -56,6 +56,7 @@ struct reg
 
 #define add_line(message) concat(name, __LINE__)
 #define get_str(message)  #message
+#define get_str1(message) get_str(message)
 // uint8_t s[] = cstr;
 
 #define COLORS \
@@ -83,9 +84,23 @@ enum colors
 
 static_assert(sizeof(get_str(dssd)) == 5, "error");
 
+static_assert(1 == 2, get_str1(__TIME__) "asdfd");
+
+#define MAX(x, y) ({                                   \
+    __typeof__(x) my_localx = (x);                     \
+    __typeof__(y) my_localy = (y);                     \
+    my_localx > my_localy ? (my_localx) : (my_localy); \
+})
+
+#define qwerty(...) (1, ##__VA_ARGS__) // ## нужно для работы макроса без аругументов, экранируется запятая
+
 int main(void)
 {
     // Основной цикл
+
+    uint8_t max_value = MAX(5, 4);
+
+    qwerty();
 
     defer(begin(), end())
     {

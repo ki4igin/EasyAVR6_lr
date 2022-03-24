@@ -94,15 +94,26 @@ ISR(USART_RXC_vect)
 /* Прерывание используется для передачи пакета данных */
 ISR(USART_UDRE_vect)
 {
-    static uint8_t cntTx;
+    // uint8_t *pbuf = (uint8_t *)&tx_buf;
+    // uint8_t size = *pbuf++;
 
-    UDR = bufTx[cntTx];
-    cntTx++;
-    if (cntTx == NBUF_TX)
+    // UDR = *(pbuf + size);
+    // size--;
+    // if (size == 0)
+    // {
+    //     UCSRB &= ~(1 << UDRIE);
+    // }
+    // tx_buf.size = size;
+
+    uint8_t size = tx_buf.size;
+    UDR = tx_buf.data[size];
+    size--;
+
+    if (size == 0)
     {
         UCSRB &= ~(1 << UDRIE);
-        cntTx = 0;
     }
+    tx_buf.size = size;
 }
 
 /* End File */
