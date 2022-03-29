@@ -11,7 +11,7 @@
  * 
  * \return значение контрольной суммы
  * *******************************************************************************/
-static inline uint8_t check_sum_calc(uint8_t *buf, uint8_t size)
+static inline uint8_t check_sum_calc(const uint8_t *buf, uint8_t size)
 {
     uint8_t sum = 0;
     for (uint8_t i = 0; i < size; i++)

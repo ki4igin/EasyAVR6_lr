@@ -17,7 +17,7 @@
 
 struct user_flags
 {
-    uint8_t is_btn_lock : 1;
+    uint8_t btn_lock : 1;
 };
 
 int main(void)
@@ -35,14 +35,14 @@ int main(void)
 
     while (1)
     {
-        if ((PINA & (1 << PINA0)) == 0 && flags.is_btn_lock == 0)
+        if ((PINA & (1 << PINA0)) == 0 && flags.btn_lock == 0)
         {
-            flags.is_btn_lock = 1;
+            flags.btn_lock = 1;
             counter = (counter < 9999) ? counter + 1 : 0;
         }
         else
         {
-            flags.is_btn_lock = 0;
+            flags.btn_lock = 0;
         }
 
         /* Задержка вывода на семисегментные индикаторы */

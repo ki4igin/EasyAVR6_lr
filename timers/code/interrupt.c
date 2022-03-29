@@ -18,9 +18,9 @@ ISR(TIMER2_OVF_vect)
     }
     else if ((PINB & (1 << PINB5)) == 0)
     {
-        if (flags.is_btn_lock == 0)
+        if (flags.btn_lock == 0)
         {
-            flags.is_btn_lock = 1;
+            flags.btn_lock = 1;
             flags.led_dir ^= 1;
         }
     }
@@ -34,7 +34,7 @@ ISR(TIMER2_OVF_vect)
     }
     else
     {
-        flags.is_btn_lock = 0;
+        flags.btn_lock = 0;
     }
 }
 

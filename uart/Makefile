@@ -62,7 +62,7 @@ endif
 CFLAGS := $(OPT) $(MCU)
 CFLAGS += -ffunction-sections -fdata-sections -fpack-struct -fshort-enums
 CFLAGS += -mshort-calls
-CFLAGS += -std=gnu11
+CFLAGS += -std=gnu17
 CFLAGS += -Winline -Wall -Wextra #-pedantic #-Werror 
 CFLAGS += -MMD -MP
 

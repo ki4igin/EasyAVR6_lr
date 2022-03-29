@@ -6,42 +6,30 @@
 #define NBUF_TX 3
 #define NBUF_RX 4
 
-typedef struct
+extern struct user_flags
 {
-    uint8_t is_btn_lock : 1;
-    uint8_t rx : 1;
-    uint8_t tx : 1;
-} Flags_t;
+    uint8_t btn_lock : 1;
+    uint8_t rx_complete : 1;
+    uint8_t tx_req : 1;
+} flags;
 
-extern uint8_t bufTx[NBUF_TX];
-extern uint8_t bufRx[NBUF_RX];
-extern uint8_t dataRx[NBUF_RX];
-
-extern Flags_t flags;
-
-// extern uint8_t cntTx;
-
-typedef struct
+extern struct buf_tx
 {
-    union
-    {
-        uint8_t size;
-        uint8_t num;
-    };
-    uint8_t data[3];
-} buf_t;
+    uint8_t count;
+    uint8_t data[NBUF_TX];
+} tx;
 
-extern struct
+extern struct buf_rx
 {
-    union
-    {
-        uint8_t size;
-        uint8_t num;
-    };
-    uint8_t data[3];
-} tx_buf;
+    uint8_t count;
+    uint8_t data[NBUF_RX];
+} rx;
 
-// extern struct buffer tx_buf;
+extern struct buf_pac
+{
+    uint8_t num_byte;
+    uint8_t data[NBUF_RX];
+} pac;
 
 #endif
 

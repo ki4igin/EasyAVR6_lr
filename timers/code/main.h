@@ -6,7 +6,7 @@
 
 struct user_flags
 {
-    uint8_t is_btn_lock : 1;
+    uint8_t btn_lock : 1;
     uint8_t led_dir : 1;
 };
 

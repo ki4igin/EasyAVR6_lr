@@ -4,36 +4,33 @@
 #include "main.h"
 #include "sevseg.h"
 
-uint8_t num_byte = {0};
-uint8_t cnt_rx_bytes = {0};
-
 /* Прерывание используется для обработки нажатий кнопок */
 ISR(TIMER2_OVF_vect)
 {
     if ((PINB & (1 << PINB6)) == 0)
     {
-        if (flags.is_btn_lock == 0)
+        if (flags.btn_lock == 0)
         {
-            flags.is_btn_lock = 1;
+            flags.btn_lock = 1;
 
-            num_byte++;
-            if (num_byte >= NBUF_RX)
+            pac.num_byte++;
+            if (pac.num_byte >= NBUF_RX)
             {
-                num_byte = 0;
+                pac.num_byte = 0;
             }
         }
     }
     else if ((PINB & (1 << PINB7)) == 0)
     {
-        if (flags.is_btn_lock == 0)
+        if (flags.btn_lock == 0)
         {
-            flags.is_btn_lock = 1;
-            flags.tx = 1;
+            flags.btn_lock = 1;
+            flags.tx_req = 1;
         }
     }
     else
     {
-        flags.is_btn_lock = 0;
+        flags.btn_lock = 0;
     }
 }
 
@@ -43,7 +40,7 @@ ISR(TIMER2_OVF_vect)
  */
 ISR(TIMER1_COMPA_vect)
 {
-    cnt_rx_bytes = 0;
+    rx.count = 0;
     TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
 }
 
@@ -53,67 +50,51 @@ ISR(TIMER1_COMPA_vect)
  */
 ISR(TIMER0_OVF_vect)
 {
-    uint8_t buf[4];
-    uint8_t *pbuf = buf;
+    uint8_t temp = pac.data[pac.num_byte];
 
-    uint8_t temp = dataRx[num_byte];
+    uint8_t symbols[4] = {
+        temp & 0x0F,
+        temp >> 4,
+        16,
+        pac.num_byte
+    };
 
-    *pbuf++ = temp & 0x0F;
-    *pbuf++ = temp >> 4;
-    *pbuf++ = 16;
-    *pbuf++ = num_byte;
-
-    sevseg_display_process(buf);
+    sevseg_display_process(symbols);
 }
 
 /* Прерывание используется приема пакета данных */
 ISR(USART_RXC_vect)
 {
     /* Если принят первый байт, то начинаем формирование таймаута приема пакета */
-    if (cnt_rx_bytes == 0)
+    if (rx.count == 0)
     {
         TCNT1 = 0;
         TCCR1B |= (1 << CS10);
     }
 
-    bufRx[cnt_rx_bytes] = UDR;
-    cnt_rx_bytes++;
+    rx.data[rx.count++] = UDR;
 
     /**
      * Если принят последний байт, то прекращаем формирование таймаута приема
      * пакета и устанавливаем флаг заверешения приема пакета данных
      */
-    if (cnt_rx_bytes == NBUF_RX)
+    if (rx.count == NBUF_RX)
     {
         TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
-        cnt_rx_bytes = 0;
-        flags.rx = 1;
+        rx.count = 0;
+        flags.rx_complete = 1;
     }
 }
 
 /* Прерывание используется для передачи пакета данных */
 ISR(USART_UDRE_vect)
 {
-    // uint8_t *pbuf = (uint8_t *)&tx_buf;
-    // uint8_t size = *pbuf++;
-
-    // UDR = *(pbuf + size);
-    // size--;
-    // if (size == 0)
-    // {
-    //     UCSRB &= ~(1 << UDRIE);
-    // }
-    // tx_buf.size = size;
-
-    uint8_t size = tx_buf.size;
-    UDR = tx_buf.data[size];
-    size--;
-
-    if (size == 0)
+    UDR = tx.data[--tx.count];    
+    
+    if (tx.count == 0)
     {
         UCSRB &= ~(1 << UDRIE);
     }
-    tx_buf.size = size;
 }
 
 /* End File */

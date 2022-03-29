@@ -5,6 +5,13 @@
 
 #include "timer.h"
 
+#define buf_declare(_id, _name_index, _name_data, _size) \
+    struct buf_##_id                                     \
+    {                                                    \
+        uint8_t _name_index;                             \
+        uint8_t _name_data[_size];                       \
+    } _id
+
 #define DEF_REG_BITS(name, addr, bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0) \
     volatile union                                                               \
     {                                                                            \
