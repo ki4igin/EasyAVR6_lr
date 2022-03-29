@@ -6,7 +6,8 @@
                 "${workspaceFolder}/counter/code/**",
                 "${workspaceFolder}/timers/code/**",
                 "${workspaceFolder}/test/code/**",
-                "${workspaceFolder}/uart/code/**"
+                "${workspaceFolder}/uart/code/**",
+                "${workspaceFolder}/uart_buf/code/**"
             ],
             "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",
             "defines": [

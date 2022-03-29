@@ -60,6 +60,20 @@
             "problemMatcher": []
         },
         {
+            "label": "build uart_buf",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "uart_buf",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build test",
             "type": "shell",
             "command": "make",
