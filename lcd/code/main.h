@@ -1,20 +1,19 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <avr/io.h>         // Заголовочный файл для работы с РВВ МК
-#include <avr/interrupt.h>  // Заголовочный файл для работы с прерываниями МК
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
-#include "lcd16x2.h"  // Заголовочный файл для работы с дисплеем LCD16x2
+#include "lcd16x2.h"
 
-// Typedef ---------------------------------------------------------------------
-// Тип пользовательских флагов
-typedef struct
+struct user_flags
 {
-    uint8_t btn_lock : 1;  // Флаг нажатия кнопки
-    uint8_t lcd_on : 1;  // Флаг включения экрана дисплея
-} Flags_t;
+    uint8_t btn_lock : 1;
+    uint8_t lcd_on : 1;
+};
 
-register Flags_t flag asm("r2");  // Переменная пользовательских флагов в РОН r2
+extern volatile struct user_flags flags __attribute__((io(&EEDR)));
+// extern struct user_flags flags;
 
 #endif
 

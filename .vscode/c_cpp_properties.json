@@ -7,12 +7,14 @@
                 "${workspaceFolder}/timers/code/**",
                 "${workspaceFolder}/test/code/**",
                 "${workspaceFolder}/uart/code/**",
+                "${workspaceFolder}/uart_328p/code/**",
                 "${workspaceFolder}/lcd/code/**",
                 "${workspaceFolder}/uart_buf/code/**"
             ],
             "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",
             "defines": [
                 "__AVR_ATmega16__",
+                // "__AVR_ATmega328P__",
                 "F_CPU = 8000000UL"
             ],
             "cStandard": "gnu11",

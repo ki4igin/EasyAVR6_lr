@@ -74,6 +74,20 @@
             "problemMatcher": []
         },
         {
+            "label": "build uart_328p",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "uart_328p",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build uart_buf",
             "type": "shell",
             "command": "make",

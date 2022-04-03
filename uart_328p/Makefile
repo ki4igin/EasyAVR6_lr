@@ -18,7 +18,7 @@ endif
 # Source
 ###############################################################################
 # Defines
-DEFINES := __AVR_ATmega16__
+DEFINES := __AVR_ATmega328P__
 DEFINES += F_CPU=8000000UL
 
 # C includes
@@ -46,7 +46,7 @@ SZ 		:= $(GCC_PATH)/$(PREFIX)size.exe
 # CFLAGS
 ###############################################################################
 # CPU
-CPU := -mmcu=atmega16
+CPU := -mmcu=atmega328p
 
 # MCU
 MCU := $(CPU)
@@ -62,7 +62,7 @@ endif
 CFLAGS := $(OPT) $(MCU)
 CFLAGS += -ffunction-sections -fdata-sections -fpack-struct -fshort-enums
 CFLAGS += -mshort-calls
-CFLAGS += -std=gnu11
+CFLAGS += -std=gnu17
 CFLAGS += -Winline -Wall -Wextra #-pedantic #-Werror 
 CFLAGS += -MMD -MP
 
@@ -92,7 +92,7 @@ all: $(BUILD_DIR)/$(TARGET).elf
 	$(OBJCOPY) $(HFLAGS) $< $(BUILD_DIR)/$(TARGET).hex	
 	$(OBJDUMP) -P mem-usage -S $< > $(BUILD_DIR)/$(TARGET).lss
 	@echo
-	$(SZ) $<
+	$(SZ) -G $<
 	# $(OBJDUMP) -P mem-usage $<
 	@echo
 	

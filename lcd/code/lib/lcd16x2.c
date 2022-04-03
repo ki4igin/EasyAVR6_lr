@@ -12,6 +12,25 @@
 #define LCD_PIN_MASK (LCD_DATA_MASK | (1 << LCD_RS) | (1 << LCD_E))
 
 /**
+ * Функция отправки полубайта данных/команды на дисплей
+ * Код полубайта должен находится в старшем полубайте аргумента hfbyte
+ * 
+ * \param hfbyte код полубайта данных/команды (старший полубайт)
+ */
+static void lcd_send_hfbyte(uint8_t hfbyte)
+{
+    LCD_PORT |= (1 << LCD_E);
+
+    /* Выводы данных дисплея подключены к старшим разрядам порта МК */
+    uint8_t temp = LCD_PORT;
+    temp &= ~LCD_DATA_MASK;
+    temp |= hfbyte;
+    LCD_PORT = temp;
+
+    LCD_PORT &= ~(1 << LCD_E);
+}
+
+/**
  * Функция отправки старшего полубайта команды на дисплей (используется при
  * инициализации). Код половины команды должен находится в старшем полубайте
  * аргумента hfcmd
@@ -33,25 +52,6 @@ static void lcd_send_byte(uint8_t byte)
 {
     lcd_send_hfbyte(byte & 0xF0);
     lcd_send_hfbyte(byte << 4);
-}
-
-/**
- * Функция отправки полубайта данных/команды на дисплей
- * Код полубайта должен находится в старшем полубайте аргумента hfbyte
- * 
- * \param hfbyte код полубайта данных/команды (старший полубайт)
- */
-static void lcd_send_hfbyte(uint8_t hfbyte)
-{
-    LCD_PORT |= (1 << LCD_E);
-
-    /* Выводы данных дисплея подключены к старшим разрядам порта МК */
-    uint8_t temp = LCD_PORT;
-    temp &= ~LCD_DATA_MASK;
-    temp |= hfbyte;
-    LCD_PORT = temp;
-
-    LCD_PORT &= ~(1 << LCD_E);
 }
 
 /* Функция инициализации дисплея LCD16x2 */
