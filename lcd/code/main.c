@@ -11,33 +11,6 @@
 #include "main.h"
 
 volatile struct user_flags flags;
-// struct user_flags flags;
-
-static void btn_process(void)
-{
-    if ((PINA & (1 << PINA5)) == 0)
-    {
-        if (flags.btn_lock == 0)
-        {
-            flags.btn_lock = 1;
-
-            if (flags.lcd_on)
-            {
-                flags.lcd_on = 0;
-                lcd_send_cmd(1 << LCD_ON);
-            }
-            else
-            {
-                flags.lcd_on = 1;
-                lcd_send_cmd((1 << LCD_ON) | (1 << LCD_ON_D));
-            }
-        }
-    }
-    else
-    {
-        flags.btn_lock = 0;
-    }
-}
 
 int main(void)
 {
@@ -52,7 +25,7 @@ int main(void)
      * Время переполнения:
      * t = 1024 * 256 / 8e6 = 32.768 мс; f = 8e6 / 1024 / 256 = 31 Гц
      */
-    // TIMSK |= (1 << TOIE2);
+    TIMSK |= (1 << TOIE2);
     TCCR2 = (1 << CS22) | (1 << CS21) | (1 << CS20);
 
     lcd_init();
@@ -63,11 +36,7 @@ int main(void)
 
     while (1)
     {
-        if (TIFR & (1 << TOV2))
-        {
-            TIFR |= (1 << TOV2);
-            btn_process();
-        }
+
     }
 }
 

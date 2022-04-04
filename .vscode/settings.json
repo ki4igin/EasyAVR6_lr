@@ -5,6 +5,7 @@
         "DDRA",
         "DDRAM",
         "DDRD",
+        "EEDR",
         "hfbyte",
         "hfcmd",
         "OCIE",

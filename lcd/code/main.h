@@ -13,7 +13,6 @@ struct user_flags
 };
 
 extern volatile struct user_flags flags __attribute__((io(&EEDR)));
-// extern struct user_flags flags;
 
 #endif
 
