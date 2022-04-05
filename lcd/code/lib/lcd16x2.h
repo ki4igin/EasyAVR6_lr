@@ -1,8 +1,8 @@
 #ifndef LCD16X2_H
 #define LCD16X2_H
 
-#include <avr/io.h>      
-#include <util/delay.h>  
+#include <avr/io.h>
+#include <util/delay.h>
 
 /* Битовые поля для команд LCD дисплея */
 
@@ -43,9 +43,9 @@
 #define LCD_DDRAM 7  // Старший бит инструкции (DB7)
 
 void lcd_init(void);
-void lcd_disp_buf(uint8_t* pbuf, uint8_t bufSize);
-void lcd_disp_str(uint8_t* str);
-void lcd_mov_cursor(uint8_t newPos);
+void lcd_disp_buf(uint8_t *buf, uint8_t size);
+void lcd_disp_str(uint8_t *str);
+void lcd_mov_cursor(uint8_t new_pos);
 void lcd_send_cmd(uint8_t cmd);
 void lcd_send_char(uint8_t data);
 

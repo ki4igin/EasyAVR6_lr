@@ -108,13 +108,14 @@ void lcd_init(void)
  * \param buf указатель на массив
  * \param size размер массива
  */
-void lcd_disp_buf(uint8_t* buf, uint8_t size)
+void lcd_disp_buf(uint8_t *buf, uint8_t size)
 {
     do
     {
         _delay_us(50);
         lcd_send_char(*buf++);
-    } while (--size);
+    }
+    while (--size);
 }
 
 /**
@@ -122,13 +123,14 @@ void lcd_disp_buf(uint8_t* buf, uint8_t size)
  * 
  * \param str указатель на строку
  */
-void lcd_disp_str(uint8_t* str)
+void lcd_disp_str(uint8_t *str)
 {
     do
     {
         _delay_us(50);
         lcd_send_char(*str);
-    } while (*++str);
+    }
+    while (*++str);
 }
 
 /**
