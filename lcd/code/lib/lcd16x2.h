@@ -2,7 +2,6 @@
 #define LCD16X2_H
 
 #include <avr/io.h>
-#include <util/delay.h>
 
 /* Битовые поля для команд LCD дисплея */
 

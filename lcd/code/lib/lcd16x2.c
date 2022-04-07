@@ -1,3 +1,5 @@
+#include <util/delay.h>
+
 #include "lcd16x2.h"
 
 #define LCD_PORT PORTD  // Порт к которому подключен LCD дисплей

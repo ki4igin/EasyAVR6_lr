@@ -100,9 +100,32 @@ static_assert(1 == 2, get_str1(__TIME__) "asdfd");
     my_localx > my_localy ? (my_localx) : (my_localy); \
 })
 
-#define qwerty(...) (1, ##__VA_ARGS__) // ## нужно для работы макроса без аругументов, экранируется запятая
+#define qwerty(...) (1, ##__VA_ARGS__)  // ## нужно для работы макроса без аругументов, экранируется запятая
 
 
+/**
+ * PB7(SCK), PB5(MOSI), PB0(SS) - выходы (SS устанавливается в лог. 1)
+ * PB6(MISO) - вход
+ * Скорость обмена: F_CPU / 4; Режим: Master; CPOL = 0; CPHA = 0
+ */
+void spi_init(void)
+{
+    DDRB |= (1 << PB7) | (1 << PB5) | (1 << PB0);
+    DDRB &= ~(1 << PB6);
+    PORTB |= (1 << PB0);
+
+    SPCR = (1 << SPE) | (1 << MSTR);
+}
+
+uint8_t spi_txrx(uint8_t tx_data)
+{
+    SPDR = tx_data;
+
+    while (SPSR & (1 << SPIF) == 0)
+        ;
+
+    return SPDR;
+}
 
 int main(void)
 {
