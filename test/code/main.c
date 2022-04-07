@@ -2,6 +2,7 @@
 #include <avr/sleep.h>
 #include <util/delay.h>
 #include <assert.h>
+#include <avr/pgmspace.h>
 
 #include "timer.h"
 
@@ -101,11 +102,15 @@ static_assert(1 == 2, get_str1(__TIME__) "asdfd");
 
 #define qwerty(...) (1, ##__VA_ARGS__) // ## нужно для работы макроса без аругументов, экранируется запятая
 
+
+
 int main(void)
 {
     // Основной цикл
 
     uint8_t max_value = MAX(5, 4);
+
+    char *str = PSTR("Hello World!");
 
     qwerty();
 
