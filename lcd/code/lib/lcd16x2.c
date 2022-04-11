@@ -19,7 +19,7 @@
  * 
  * \param hfbyte код полубайта данных/команды (старший полубайт)
  */
-static void lcd_send_hfbyte(uint8_t hfbyte)
+static inline void lcd_send_hfbyte(uint8_t hfbyte)
 {
     LCD_PORT |= (1 << LCD_E);
 
@@ -52,8 +52,35 @@ static void lcd_send_hfcmd(uint8_t hfcmd)
  */
 static void lcd_send_byte(uint8_t byte)
 {
+    _delay_us(50);
     lcd_send_hfbyte(byte & 0xF0);
     lcd_send_hfbyte(byte << 4);
+}
+
+/**
+ * Функция вывода на дисплей символа
+ * Время выполнения составляет 50 мкс
+ * 
+ * \param symbol код символа
+ */
+void lcd_send_char(uint8_t symbol)
+{
+    LCD_PORT |= (1 << LCD_RS);
+    lcd_send_byte(symbol);
+}
+
+/**
+ * Функция отправки команды на дисплей
+ * Время выполнения команд "Очистка дисплея с установкой курсора в начало первой
+ * строки" и "Установка курсора в начало первой строки" составляет 1.5 мс;
+ * время выполнения остальных команд составляет 50 мкс.
+ * 
+ * \param cmd код команды
+ */
+void lcd_send_cmd(uint8_t cmd)
+{
+    LCD_PORT &= ~(1 << LCD_RS);
+    lcd_send_byte(cmd);
 }
 
 /* Функция инициализации дисплея LCD16x2 */
@@ -91,16 +118,13 @@ void lcd_init(void)
      */
 
     /* Подтверждение 4-битного интерфейса */
-    _delay_us(50);
     lcd_send_cmd(1 << LCD_F);
 
     /* Очистка дисплея, дисплей очищается не менее 1.5 мс */
-    _delay_us(50);
     lcd_send_cmd(1 << LCD_CLR);
     _delay_ms(2);
 
     /* Включение экрана дисплея */
-    _delay_us(50);
     lcd_send_cmd((1 << LCD_ON) | (1 << LCD_ON_D));
 }
 
@@ -114,7 +138,6 @@ void lcd_disp_buf(uint8_t *buf, uint8_t size)
 {
     do
     {
-        _delay_us(50);
         lcd_send_char(*buf++);
     }
     while (--size);
@@ -129,7 +152,6 @@ void lcd_disp_str(uint8_t *str)
 {
     do
     {
-        _delay_us(50);
         lcd_send_char(*str);
     }
     while (*++str);
@@ -137,40 +159,12 @@ void lcd_disp_str(uint8_t *str)
 
 /**
  * Функция изменения позиции курсора дисплея
- * Время выполнения составляет 50 мкс
  * 
  * \param new_pos новая позиция курсора дисплея
  */
 void lcd_mov_cursor(uint8_t new_pos)
 {
-    uint8_t temp = (1 << LCD_DDRAM) | new_pos;
-    lcd_send_cmd(temp);
-}
-
-/**
- * Функция вывода на дисплей символа
- * Время выполнения составляет 50 мкс
- * 
- * \param symbol код символа
- */
-void lcd_send_char(uint8_t symbol)
-{
-    LCD_PORT |= (1 << LCD_RS);
-    lcd_send_byte(symbol);
-}
-
-/**
- * Функция отправки команды на дисплей
- * Время выполнения команд "Очистка дисплея с установкой курсора в начало первой
- * строки" и "Установка курсора в начало первой строки" составляет 1.5 мс;
- * время выполнения остальных команд составляет 50 мкс.
- * 
- * \param cmd код команды
- */
-void lcd_send_cmd(uint8_t cmd)
-{
-    LCD_PORT &= ~(1 << LCD_RS);
-    lcd_send_byte(cmd);
+    /* code */
 }
 
 /* End File */
