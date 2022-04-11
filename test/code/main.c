@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <avr/pgmspace.h>
 
+#include "lcd16x2.h"
+
 #include "timer.h"
 
 #define buf_declare(_id, _name_index, _name_data, _size) \
@@ -92,7 +94,7 @@ enum colors
 
 static_assert(sizeof(get_str(dssd)) == 5, "error");
 
-static_assert(1 == 2, get_str1(__TIME__) "asdfd");
+// static_assert(1 == 2, get_str1(__TIME__) "asdfd");
 
 #define MAX(x, y) ({                                   \
     __typeof__(x) my_localx = (x);                     \
@@ -121,7 +123,7 @@ uint8_t spi_txrx(uint8_t tx_data)
 {
     SPDR = tx_data;
 
-    while (SPSR & (1 << SPIF) == 0)
+    while ((SPSR & (1 << SPIF)) == 0)
         ;
 
     return SPDR;
@@ -132,10 +134,11 @@ int main(void)
     // Основной цикл
 
     uint8_t max_value = MAX(5, 4);
+    PORTA = max_value;
 
-    char *str = PSTR("Hello World!");
-
-    qwerty();
+    const char *str = PSTR("Hello World!");
+    PORTA = (uint16_t)str;
+    static_assert(sizeof(str) == 2, "error");
 
     defer(begin(), end())
     {
@@ -144,6 +147,8 @@ int main(void)
     }
 
     timer1_init(0xFA);
+
+    lcd_disp_strpgm("STRasdasd sddddddddddd");
 
     struct reg rega = {
         .ddr = DDRA,

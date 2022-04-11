@@ -1,4 +1,5 @@
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 
 #include "lcd16x2.h"
 
@@ -81,6 +82,7 @@ void lcd_disp_str(uint8_t *str)
     }
     while (*++str);
 }
+
 
 void lcd_mov_cursor(uint8_t new_pos)
 {

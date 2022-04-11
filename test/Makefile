@@ -92,7 +92,7 @@ all: $(BUILD_DIR)/$(TARGET).elf
 	$(OBJCOPY) $(HFLAGS) $< $(BUILD_DIR)/$(TARGET).hex	
 	$(OBJDUMP) -P mem-usage -S $< > $(BUILD_DIR)/$(TARGET).lss
 	@echo
-	$(SZ) -G $<
+	$(SZ) $<
 	# $(OBJDUMP) -P mem-usage $<
 	@echo
 	
