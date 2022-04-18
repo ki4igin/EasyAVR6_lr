@@ -3,12 +3,12 @@
 
 // Typedef ---------------------------------------------------------------------
 // Тип статуса модуля SPI
-typedef enum
+enum spi_status
 {
-    SPI_NOINIT = 0,  // SPI не инициализирован
+    SPI_NOT_INIT = 0,  // SPI не инициализирован
     SPI_READY,       // SPI готов к обмену
     SPI_BUSY         // SPI занят
-} SpiStatus_t;
+};
 
 // Macro -----------------------------------------------------------------------
 #define SPI_PORT PORTB  // Порт на который выведен модуль SPI
@@ -20,13 +20,13 @@ typedef enum
 #define SPI_MOSI 5  // Номер вывода MOSI модуля SPI
 #define SPI_SS   4  // Номер вывода SS модуля SPI
 
-#define SPI_CS 1  // Номер вывода МК к которому подключен вывод CS 
-                  // расширителя портов
+#define SPI_CS_AXE 1  // Номер вывода МК к которому подключен вывод CS 
+                      // расширителя портов
 
 // Variables -------------------------------------------------------------------
-static SpiStatus_t spiStatus = SPI_NOINIT;  // Переменная статуса модуля SPI
-static uint8_t*    pbufSpi;                 // Указатель на буфер для обмена
-static uint8_t     bufSizeSpi;              // Размер буфера для обмена
+static enum spi_status spi_status = SPI_NOT_INIT;  // Переменная статуса модуля SPI
+static uint8_t *pbufSpi;                    // Указатель на буфер для обмена
+static uint8_t bufSizeSpi;                  // Размер буфера для обмена
 
 // Functions -------------------------------------------------------------------
 /*******************************************************************************
@@ -42,49 +42,49 @@ void SpiInit2(void)
     // SCK, MOSI, SS и CS - выходы (SS устанавливается как выход чтобы
     // модуль SPI случайно не перешел в режим Slave);
     // MISO - вход
-    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS);
+    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS_AXE);
     SPI_DDR &= ~(1 << SPI_MISO);
 
     // Установка вывода СS в лог. 1
-    SPI_PORT |= (1 << SPI_CS);
+    SPI_PORT |= (1 << SPI_CS_AXE);
 
     // Установка режима, включение модуля SPI и прерывания по завершению обмена
     SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR);
 
     // Переключение вывода СS для завершения инициализации
-    SPI_PORT &= ~(1 << SPI_CS);
-    SPI_PORT |= (1 << SPI_CS);
+    SPI_PORT &= ~(1 << SPI_CS_AXE);
+    SPI_PORT |= (1 << SPI_CS_AXE);
 
     // Установка статуса SPI_READY
-    spiStatus = SPI_READY;
+    spi_status = SPI_READY;
 }
 
 void SpiInit(void)
 {
-    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS);
+    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS_AXE);
     SPI_DDR &= ~(1 << SPI_MISO);
 
-    SPI_PORT |= (1 << SPI_CS);
+    SPI_PORT |= (1 << SPI_CS_AXE);
     SPI_PORT |= (1 << SPI_SS);
 
     SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR) | (1 << CPHA) | (1 << CPOL);
 
-    SPI_PORT &= ~(1 << SPI_CS);
-    SPI_PORT |= (1 << SPI_CS);
+    SPI_PORT &= ~(1 << SPI_CS_AXE);
+    SPI_PORT |= (1 << SPI_CS_AXE);
 
     SPI_PORT &= ~(1 << SPI_SS);
     SPI_PORT |= (1 << SPI_SS);
 
-    spiStatus = SPI_READY;
+    spi_status = SPI_READY;
 
-    sei();
+    // sei();
 
     uint8_t buf[2] = {0};
-    buf[0]         = 0x80 | 0x0F;
+    buf[0] = 0x80 | 0x0F;
 
     SpiTxRx(buf, sizeof(buf));
 
-    while (spiStatus != SPI_READY)
+    while (spi_status != SPI_READY)
     {
         ;
     }
@@ -105,25 +105,25 @@ void SpiInit(void)
 pbuf        указатель на буфер для обмена
 bufSize     размер буфера для обмена
 *******************************************************************************/
-void SpiTxRx(uint8_t* pbuf, uint8_t bufSize)
+void SpiTxRx(uint8_t *pbuf, uint8_t bufSize)
 {
     // Если статус модуля не равен SPI_READY, то выходим из функции
-    if (spiStatus != SPI_READY)
+    if (spi_status != SPI_READY)
     {
         return;
     }
 
     // Установка статуса SPI_BUSY
-    spiStatus = SPI_BUSY;
+    spi_status = SPI_BUSY;
 
     // Сброс вывода СS (выбор ведомого устройства)
-    SPI_PORT &= ~(1 << SPI_CS);
+    SPI_PORT &= ~(1 << SPI_CS_AXE);
 
     // Установка размера и указателя на буфер обмена и
     // передача первого байта данных из буфера обмена
     bufSizeSpi = bufSize;
-    pbufSpi    = pbuf;
-    SPDR       = *pbufSpi;
+    pbufSpi = pbuf;
+    SPDR = *pbufSpi;
 }
 
 /*******************************************************************************
@@ -147,8 +147,8 @@ void SpiTc(void)
     }
     else
     {
-        SPI_PORT |= (1 << SPI_CS);
-        spiStatus = SPI_READY;
+        SPI_PORT |= (1 << SPI_CS_AXE);
+        spi_status = SPI_READY;
     };
 }
 // End File --------------------------------------------------------------------
