@@ -1,16 +1,20 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 // Includes --------------------------------------------------------------------
 #include "spi.h"
+#include <avr/interrupt.h>
 
 // Typedef ---------------------------------------------------------------------
 // Тип статуса модуля SPI
-enum spi_status
+
+struct spi_buf
 {
-    SPI_NOT_INIT = 0,  // SPI не инициализирован
-    SPI_READY,       // SPI готов к обмену
-    SPI_BUSY         // SPI занят
+    uint8_t *data;
+    uint8_t count;
 };
 
-// Macro -----------------------------------------------------------------------
 #define SPI_PORT PORTB  // Порт на который выведен модуль SPI
 #define SPI_DDR  DDRB   //
 #define SPI_PIN  PINB   //
@@ -20,18 +24,16 @@ enum spi_status
 #define SPI_MOSI 5  // Номер вывода MOSI модуля SPI
 #define SPI_SS   4  // Номер вывода SS модуля SPI
 
-#define SPI_CS_AXE 1  // Номер вывода МК к которому подключен вывод CS 
-                      // расширителя портов
+#define SPI_CS_AXE 4  // Номер вывода МК к которому подключен вывод CS акселерометра
 
-// Variables -------------------------------------------------------------------
-static enum spi_status spi_status = SPI_NOT_INIT;  // Переменная статуса модуля SPI
-static uint8_t *pbufSpi;                    // Указатель на буфер для обмена
-static uint8_t bufSizeSpi;                  // Размер буфера для обмена
+volatile enum spi_status spi_status = SPI_STATUS_NOT_INIT;
+
+static struct spi_buf spi_buf;
 
 // Functions -------------------------------------------------------------------
 /*******************************************************************************
 Функция инициализации SPI
-По окончанию инициализации устанавливается статус SPI_READY
+По окончанию инициализации устанавливается статус SPI_STATUS_READY
 Скорость обмена: F_CPU / 4
 Режим: Master; CPOL = 0; CPHA = 0
 Разрешение прерывания по завершению обмена
@@ -55,11 +57,11 @@ void SpiInit2(void)
     SPI_PORT &= ~(1 << SPI_CS_AXE);
     SPI_PORT |= (1 << SPI_CS_AXE);
 
-    // Установка статуса SPI_READY
-    spi_status = SPI_READY;
+    // Установка статуса SPI_STATUS_READY
+    spi_status = SPI_STATUS_READY;
 }
 
-void SpiInit(void)
+void spi_init(void)
 {
     SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS_AXE);
     SPI_DDR &= ~(1 << SPI_MISO);
@@ -72,83 +74,77 @@ void SpiInit(void)
     SPI_PORT &= ~(1 << SPI_CS_AXE);
     SPI_PORT |= (1 << SPI_CS_AXE);
 
-    SPI_PORT &= ~(1 << SPI_SS);
-    SPI_PORT |= (1 << SPI_SS);
+    // SPI_PORT &= ~(1 << SPI_SS);
+    // SPI_PORT |= (1 << SPI_SS);
 
-    spi_status = SPI_READY;
+    spi_status = SPI_STATUS_READY;
 
     // sei();
 
-    uint8_t buf[2] = {0};
-    buf[0] = 0x80 | 0x0F;
+    // uint8_t buf[2] = {0};
+    // buf[0] = 0x80 | 0x0F;
 
-    SpiTxRx(buf, sizeof(buf));
+    // spi_txrx(buf, sizeof(buf));
 
-    while (spi_status != SPI_READY)
-    {
-        ;
-    }
-    PORTC = buf[1];
+    // while (spi_status != SPI_STATUS_READY)
+    // {
+    //     ;
+    // }
+    // PORTC = buf[1];
 
-    while (1)
-    {
-        /* code */
-    }
+    // while (1)
+    // {
+    //     /* code */
+    // }
 }
 
 /*******************************************************************************
 Функция обмена данными с ведомым устройством
-Во время обмена устанавливается статус SPI_BUSY, после обмена устанавливается
-статус SPI_READY
+Во время обмена устанавливается статус SPI_STATUS_BUSY, после обмена устанавливается
+статус SPI_STATUS_READY
 
 Аргументы:
-pbuf        указатель на буфер для обмена
-bufSize     размер буфера для обмена
+buf        указатель на буфер для обмена
+size     размер буфера для обмена
 *******************************************************************************/
-void SpiTxRx(uint8_t *pbuf, uint8_t bufSize)
+void spi_txrx(uint8_t *buf, uint8_t size)
 {
-    // Если статус модуля не равен SPI_READY, то выходим из функции
-    if (spi_status != SPI_READY)
+    // Если статус модуля не равен SPI_STATUS_READY, то выходим из функции
+    if (spi_status != SPI_STATUS_READY)
     {
         return;
     }
 
-    // Установка статуса SPI_BUSY
-    spi_status = SPI_BUSY;
+    // Установка статуса SPI_STATUS_BUSY
+    spi_status = SPI_STATUS_BUSY;
 
     // Сброс вывода СS (выбор ведомого устройства)
     SPI_PORT &= ~(1 << SPI_CS_AXE);
 
     // Установка размера и указателя на буфер обмена и
     // передача первого байта данных из буфера обмена
-    bufSizeSpi = bufSize;
-    pbufSpi = pbuf;
-    SPDR = *pbufSpi;
+    spi_buf.count = size;
+    spi_buf.data = buf;
+    SPDR = *spi_buf.data;
 }
 
 /*******************************************************************************
 Функция обработки события по завершению обмена одним байтом модуля SPI
 Принятые данные помещаются в буфер обмена вместо переданных данных
 *******************************************************************************/
-void SpiTc(void)
+ISR(SPI_STC_vect)
 {
-    // Чтение пришедшего байт данных из SPDR и помещение его в буфер обмена на
-    // место переданного байта
-    *pbufSpi = SPDR;
+    *spi_buf.data = SPDR;
 
-    // Уменьшение количества байт обмена
-    // Если оставшееся количество байт обмена ну равно нулю, то передаем
-    // следующий байт данных из буфера обмена;
-    // иначе, завершаем обмен: устанавливаем вывод CS и статус SPI_READY
-    bufSizeSpi--;
-    if (bufSizeSpi)
+    if (--spi_buf.count)
     {
-        SPDR = *++pbufSpi;
+        spi_buf.data++;
+        SPDR = *spi_buf.data;
     }
     else
     {
         SPI_PORT |= (1 << SPI_CS_AXE);
-        spi_status = SPI_READY;
+        spi_status = SPI_STATUS_READY;
     };
 }
 // End File --------------------------------------------------------------------

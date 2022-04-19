@@ -1,3 +1,7 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 // Includes --------------------------------------------------------------------
 #include "semsegspi.h"
 
@@ -210,7 +214,7 @@ void SemSegInit(void)
     *pbuf++ = 0;
 
     // Обмен данными с расширителем портов, передаем и принемаем 4 байта
-    SpiTxRx(semSegBuf, 4);
+    spi_txrx(semSegBuf, 4);
 }
 
 /*******************************************************************************
@@ -255,7 +259,7 @@ void SemSegDisp(uint8_t* pbuf, uint8_t bufSize)
     }
 
     // Обмен данными с расширителем портов, передаем и принемаем 4 байта
-    SpiTxRx(semSegBuf, 4);
+    spi_txrx(semSegBuf, 4);
 }
 
 /*******************************************************************************

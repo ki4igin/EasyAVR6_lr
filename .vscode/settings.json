@@ -30,6 +30,7 @@
         "TIMSK",
         "TOIE",
         "TXEN",
+        "txrx",
         "ubrr",
         "UBRRH",
         "UBRRL",
