@@ -61,87 +61,188 @@ enum __attribute__((packed)) lsm_xl_odr
     LSM_XL_ODR_6667Hz = 0x0A
 };
 
+/* Регистр управления акселерометром */
 struct lsm_ctrl1_xl
 {
     uint8_t not_used_01 : 1;
-    uint8_t lpf2_xl_en : 1;
-    enum lsm_xl_fs xl_fs : 2;
-    enum lsm_xl_odr xl_odr : 4;
+    uint8_t lpf2_xl_en : 1;      // включение ФНЧ2
+    enum lsm_xl_fs xl_fs : 2;    // выбор диапазона
+    enum lsm_xl_odr xl_odr : 4;  // выбор частоты выборки
 };
 
+enum __attribute__((packed)) lsm_g_fs
+{
+    LSM_G_125dps = 1,
+    LSM_G_250dps = 0,
+    LSM_G_500dps = 2,
+    LSM_G_1000dps = 4,
+    LSM_G_2000dps = 6,
+};
+
+enum __attribute__((packed)) lsm_g_odr
+{
+    LSM_G_ODR_12Hz5_HIGH_PERF = 0x01,
+    LSM_G_ODR_26Hz_HIGH_PERF = 0x02,
+    LSM_G_ODR_52Hz_HIGH_PERF = 0x03,
+    LSM_G_ODR_104Hz_HIGH_PERF = 0x04,
+    LSM_G_ODR_208Hz_HIGH_PERF = 0x05,
+    LSM_G_ODR_417Hz_HIGH_PERF = 0x06,
+    LSM_G_ODR_833Hz_HIGH_PERF = 0x07,
+    LSM_G_ODR_1667Hz_HIGH_PERF = 0x08,
+    LSM_G_ODR_3333Hz_HIGH_PERF = 0x09,
+    LSM_G_ODR_6667Hz_HIGH_PERF = 0x0A
+};
+
+/* Регистр управления гироскопом */
 struct lsm_ctrl2_g
 {
     uint8_t not_used_01 : 1;
-    uint8_t fs_g : 3; /* fs_125 + fs_g */
-    uint8_t odr_g : 4;
+    enum lsm_g_fs g_fs : 3;    // выбор диапазона
+    enum lsm_g_odr g_odr : 4;  // выбор частоты выборки
 };
 
+/* Регистр управления 3 */
 struct lsm_ctrl3_c
 {
-    uint8_t sw_reset : 1;
+    uint8_t sw_reset : 1;  // сброс устройства
     uint8_t not_used_01 : 1;
-    uint8_t if_inc : 1;
-    uint8_t sim : 1;
-    uint8_t pp_od : 1;
-    uint8_t h_lactive : 1;
-    uint8_t bdu : 1;
-    uint8_t boot : 1;
+    uint8_t if_inc : 1;     // автоматический инкремент адреса (по умолчанию 1)
+    uint8_t sim : 1;        // 0: 4-х проводной SPI; 1: 3-х проводной SPI
+    uint8_t pp_od : 1;      // 0: INT1/INT2 выводы с 2С; 1: INT1/INT2 выводы с ОК
+    uint8_t h_lactive : 1;  // 0: активный уровень прерываний высокий; 1: низкий
+    uint8_t bdu : 1;        // 0: данные обновляются непрерывно;
+                            // 1: данные не обновляются пока не будут считаны
+    uint8_t boot : 1;       // сброс содержимого памяти устройство
 };
 
+/* Регистр управления 4 */
 struct lsm_ctrl4_c
 {
     uint8_t not_used_01 : 1;
-    uint8_t lpf1_sel_g : 1;
-    uint8_t i2c_disable : 1;
-    uint8_t drdy_mask : 1;
+    uint8_t lpf1_sel_g : 1;   // включение цифрового ФНЧ1 гироскопа
+    uint8_t i2c_disable : 1;  // выключить интерфейс I2C
+    uint8_t drdy_mask : 1;    // маскирование сигнала готовности данных пока фильтры настраиваются
     uint8_t not_used_02 : 1;
-    uint8_t int2_on_int1 : 1;
-    uint8_t sleep_g : 1;
+    uint8_t int2_on_int1 : 1;  // 0: сигналы прерываний разделены между выводами INT1 и INT2
+                               // 1: сигналы прерываний через логическое ИЛИ выводятся на INT1
+    uint8_t sleep_g : 1;       // включить спящий режим гироскопа
     uint8_t not_used_03 : 1;
 };
 
+enum __attribute__((packed)) lsm_st_xl
+{
+    LSM_ST_XL_DISABLE = 0,
+    LSM_ST_XL_POSITIVE = 1,
+    LSM_ST_XL_NEGATIVE = 2,
+};
+
+enum __attribute__((packed)) lsm_st_g
+{
+    LSM_ST_GY_DISABLE = 0,
+    LSM_ST_GY_POSITIVE = 1,
+    LSM_ST_GY_NEGATIVE = 3,
+};
+
+enum __attribute__((packed)) lsm_round
+{
+    LSM_ROUND_DISABLE = 0,
+    LSM_ROUND_AXE = 1,
+    LSM_ROUND_GY = 2,
+    LSM_ROUND_AXE_GY = 3
+};
+
+/* Регистр управления 5 */
 struct lsm_ctrl5_c
 {
-    uint8_t st_xl : 2;
-    uint8_t st_g : 2;
+    enum lsm_st_xl st_xl : 2;  // режим самотестирования акселерометра
+    enum lsm_st_g st_g : 2;    // режим самотестирования гироскопа
     uint8_t not_used_01 : 1;
-    uint8_t rounding : 2;
-    uint8_t xl_ulp_en : 1;
+    enum lsm_round rounding : 2;  // выбор циклического режима чтения данных
+    uint8_t xl_ulp_en : 1;        // включить ultra-low-power режим акселерометра
 };
 
+enum __attribute__((packed)) lsm_ftype
+{
+    LSM_ULTRA_LIGHT = 0,
+    LSM_VERY_LIGHT = 1,
+    LSM_LIGHT = 2,
+    LSM_MEDIUM = 3,
+    LSM_STRONG = 4,      /* not available for data rate > 1k670Hz */
+    LSM_VERY_STRONG = 5, /* not available for data rate > 1k670Hz */
+    LSM_AGGRESSIVE = 6,  /* not available for data rate > 1k670Hz */
+    LSM_XTREME = 7,      /* not available for data rate > 1k670Hz */
+};
+
+enum __attribute__((packed)) lsm_den_mode
+{
+    LSM_DEN_DISABLE = 0,
+    LSM_LEVEL_FIFO = 6,
+    LSM_LEVEL_LETCHED = 3,
+    LSM_LEVEL_TRIGGER = 2,
+    LSM_EDGE_TRIGGER = 4,
+};
+
+/* Регистр управления 6 */
 struct lsm_ctrl6_c
 {
-    uint8_t ftype : 3;
-    uint8_t usr_off_w : 1;
-    uint8_t xl_hm_mode : 1;
-    uint8_t den_mode : 3; /* trig_en + lvl1_en + lvl2_en */
+    enum lsm_ftype ftype : 3;        // полоса пропускания ФНЧ1 гироскопа
+    uint8_t usr_off_w : 1;           // 0: бит регистра смещения акселерометра равен 2^-10 g; 1: 2^-6 g
+    uint8_t xl_hm_mode : 1;          // выключение высокопроизводительного режима акселерометра
+    enum lsm_den_mode den_mode : 3;  // выбор режима триггера
 };
 
+enum __attribute__((packed)) lsm_hpm_g
+{
+    LSM_HPM_G_16mHz = 0,
+    LSM_HPM_G_65mHz = 1,
+    LSM_HPM_G_260mHz = 2,
+    LSM_HPM_G_1Hz04 = 3,
+};
+
+/* Регистр управления 7 */
 struct lsm_ctrl7_g
 {
     uint8_t not_used_01 : 1;
-    uint8_t usr_off_on_out : 1;
+    uint8_t usr_off_on_out : 1;  // включение блока коррекции смещения акселерометра
     uint8_t not_used_02 : 2;
-    uint8_t hpm_g : 2;
-    uint8_t hp_en_g : 1;
-    uint8_t g_hm_mode : 1;
+    uint8_t hpm_g : 2;      // полоса подавления цифрового ФВЧ гироскопа
+    uint8_t hp_en_g : 1;    // включение цифрового ФВЧ гироскопа
+    uint8_t g_hm_mode : 1;  // выключение высокопроизводительного режима гироскопа
 };
 
+enum __attribute__((packed)) lsm_hp_slope_xl
+{
+    LSM_HP_PATH_DISABLE_ON_OUT = 0x00,
+    LSM_SLOPE_ODR_DIV_4 = 0x10,
+    LSM_HP_ODR_DIV_10 = 0x11,
+    LSM_HP_ODR_DIV_20 = 0x12,
+    LSM_HP_ODR_DIV_45 = 0x13,
+    LSM_HP_ODR_DIV_100 = 0x14,
+    LSM_HP_ODR_DIV_200 = 0x15,
+    LSM_HP_ODR_DIV_400 = 0x16,
+    LSM_HP_ODR_DIV_800 = 0x17,
+    LSM_HP_REF_MD_ODR_DIV_10 = 0x31,
+    LSM_HP_REF_MD_ODR_DIV_20 = 0x32,
+    LSM_HP_REF_MD_ODR_DIV_45 = 0x33,
+    LSM_HP_REF_MD_ODR_DIV_100 = 0x34,
+    LSM_HP_REF_MD_ODR_DIV_200 = 0x35,
+    LSM_HP_REF_MD_ODR_DIV_400 = 0x36,
+    LSM_HP_REF_MD_ODR_DIV_800 = 0x37,
+    LSM_LP_ODR_DIV_10 = 0x01,
+    LSM_LP_ODR_DIV_20 = 0x02,
+    LSM_LP_ODR_DIV_45 = 0x03,
+    LSM_LP_ODR_DIV_100 = 0x04,
+    LSM_LP_ODR_DIV_200 = 0x05,
+    LSM_LP_ODR_DIV_400 = 0x06,
+    LSM_LP_ODR_DIV_800 = 0x07,
+};
+
+/* Регистр управления 8 */
 struct lsm_ctrl8_xl
 {
-    uint8_t low_pass_on_6d : 1;
+    uint8_t low_pass_on_6d : 1; // включение ФНЧ2 на пути данных в функцию 6D
     uint8_t not_used_01 : 1;
-    // union
-    // {
-    uint8_t hp_slope_xl : 6;
-    //   struct
-    //   {
-    //       uint8_t hp_slope_xl_en : 1;
-    //       uint8_t fastsettl_mode_xl : 1;
-    //       uint8_t hp_ref_mode_xl : 1;
-    //       uint8_t hpcf_xl : 3;
-    //   };
-    // };
+    enum lsm_hp_slope_xl hp_slope_xl : 6; // выбор полосы пропускания акселерометра
 };
 
 struct lsm_ctrl9_xl
