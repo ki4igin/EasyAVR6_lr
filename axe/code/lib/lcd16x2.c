@@ -148,13 +148,14 @@ void lcd_disp_buf(uint8_t *buf, uint8_t size)
  * 
  * \param str указатель на строку
  */
-void lcd_disp_str(uint8_t *str)
+void lcd_disp_str(char *str)
 {
+    uint8_t *ptr = (uint8_t *)str;
     do
     {
-        lcd_send_char(*str);
+        lcd_send_char(*ptr);
     }
-    while (*++str);
+    while (*++ptr);
 }
 
 /**

@@ -1,6 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
 // Includes --------------------------------------------------------------------
 #include "spi.h"
@@ -38,64 +35,17 @@ static struct spi_buf spi_buf;
 Режим: Master; CPOL = 0; CPHA = 0
 Разрешение прерывания по завершению обмена
 *******************************************************************************/
-void SpiInit2(void)
-{
-    // Инициализация выводов:
-    // SCK, MOSI, SS и CS - выходы (SS устанавливается как выход чтобы
-    // модуль SPI случайно не перешел в режим Slave);
-    // MISO - вход
-    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS_AXE);
-    SPI_DDR &= ~(1 << SPI_MISO);
-
-    // Установка вывода СS в лог. 1
-    SPI_PORT |= (1 << SPI_CS_AXE);
-
-    // Установка режима, включение модуля SPI и прерывания по завершению обмена
-    SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR);
-
-    // Переключение вывода СS для завершения инициализации
-    SPI_PORT &= ~(1 << SPI_CS_AXE);
-    SPI_PORT |= (1 << SPI_CS_AXE);
-
-    // Установка статуса SPI_STATUS_READY
-    spi_status = SPI_STATUS_READY;
-}
 
 void spi_init(void)
 {
-    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_SS) | (1 << SPI_CS_AXE);
+    SPI_DDR |= (1 << SPI_SCK) | (1 << SPI_MOSI) | (1 << SPI_CS_AXE);
     SPI_DDR &= ~(1 << SPI_MISO);
 
     SPI_PORT |= (1 << SPI_CS_AXE);
-    SPI_PORT |= (1 << SPI_SS);
 
-    SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR) | (1 << CPHA) | (1 << CPOL);
-
-    SPI_PORT &= ~(1 << SPI_CS_AXE);
-    SPI_PORT |= (1 << SPI_CS_AXE);
-
-    // SPI_PORT &= ~(1 << SPI_SS);
-    // SPI_PORT |= (1 << SPI_SS);
+    SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR);
 
     spi_status = SPI_STATUS_READY;
-
-    // sei();
-
-    // uint8_t buf[2] = {0};
-    // buf[0] = 0x80 | 0x0F;
-
-    // spi_txrx(buf, sizeof(buf));
-
-    // while (spi_status != SPI_STATUS_READY)
-    // {
-    //     ;
-    // }
-    // PORTC = buf[1];
-
-    // while (1)
-    // {
-    //     /* code */
-    // }
 }
 
 /*******************************************************************************
@@ -107,7 +57,7 @@ void spi_init(void)
 buf        указатель на буфер для обмена
 size     размер буфера для обмена
 *******************************************************************************/
-void spi_txrx(uint8_t *buf, uint8_t size)
+void spi_txrx(void *buf, uint8_t size)
 {
     // Если статус модуля не равен SPI_STATUS_READY, то выходим из функции
     if (spi_status != SPI_STATUS_READY)
@@ -147,4 +97,5 @@ ISR(SPI_STC_vect)
         spi_status = SPI_STATUS_READY;
     };
 }
-// End File --------------------------------------------------------------------
+
+/* End File */

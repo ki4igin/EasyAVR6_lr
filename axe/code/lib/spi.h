@@ -1,8 +1,7 @@
 #ifndef SPI_H
 #define SPI_H
 
-// Includes --------------------------------------------------------------------
-#include <avr/io.h>  // Заголовочный файл для работы с РВВ МК
+#include <avr/io.h>
 
 enum spi_status
 {
@@ -13,9 +12,9 @@ enum spi_status
 
 extern volatile enum spi_status spi_status;
 
-// Function prototypes ---------------------------------------------------------
 void spi_init(void);
-void spi_txrx(uint8_t* buf, uint8_t size);
+void spi_txrx(void* buf, uint8_t size);
 
 #endif
-// End File --------------------------------------------------------------------
+
+/* End File */
