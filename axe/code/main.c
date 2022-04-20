@@ -12,7 +12,7 @@ Clock:   ext.clock 8 MHz
 
 // Includes --------------------------------------------------------------------
 #include <avr/pgmspace.h>
-#include <assert.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 
 #include "main.h"
