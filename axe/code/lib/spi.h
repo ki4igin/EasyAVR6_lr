@@ -6,7 +6,7 @@
 enum spi_status
 {
     SPI_STATUS_NOT_INIT,
-    SPI_STATUS_READY,
+    SPI_STATUS_RDY,
     SPI_STATUS_BUSY
 };
 

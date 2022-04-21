@@ -29,8 +29,7 @@
 static uint8_t read_id()
 {
     struct lsm_reg_pac pac = {
-        .addr = LSM_WHO_AM_I
-    };
+        .addr = LSM_WHO_AM_I};
 
     lsm_read_reg(&pac);
 
@@ -68,10 +67,33 @@ int main(void)
         }
     }
 
+    struct lsm_reg_pac xl = {
+        .addr = LSM_CTRL1_XL,
+        .reg.ctrl1_xl = {
+            .xl_fs = LSM_XL_FS_4g,
+            .xl_odr = LSM_XL_ODR_12Hz5}};
+
+    spi_txrx((uint8_t *)&xl, sizeof(xl));
+
     _delay_ms(2000);
 
     while (1)
-    {        
+    {
+        struct lsm_word_pac temp_pac = {
+            .addr = LSM_OUTZ_L_A};
+
+        lsm_read_word(&temp_pac);
+        _delay_ms(100);
+
+        struct lsm_word temp_word = temp_pac.data;
+
+        int16_t temp = (int16_t)(temp_word.h * 256 + temp_word.l) * 4 * 1000L / (1U << 15);
+
+        uint8_t temp_str[7];
+        int2str(temp, 2, temp_str, sizeof(temp_str));
+        lcd_mov_cursor(5);
+        lcd_disp_buf(temp_str, sizeof(temp_str));
+        _delay_ms(100);
     }
 }
 

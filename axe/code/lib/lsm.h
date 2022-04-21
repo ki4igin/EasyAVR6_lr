@@ -6,10 +6,13 @@
 
 #include "spi.h"
 
+/* Идентификатор микросхемы */
 #define LSM_ID 0x6C
 
+/* Адрес регистра идентификатора */
 #define LSM_WHO_AM_I 0x0FU
 
+/* Адреса регистров управления */
 #define LSM_CTRL1_XL 0x10U
 #define LSM_CTRL2_G  0x11U
 #define LSM_CTRL3_C  0x12U
@@ -21,8 +24,10 @@
 #define LSM_CTRL9_XL 0x18U
 #define LSM_CTRL10_C 0x19U
 
+/* Адрес регистра статуса */
 #define LSM2_STATUS_REG 0x1EU
 
+/* Адреса регистров данных */
 #define LSM_OUT_TEMP_L 0x20U
 #define LSM_OUT_TEMP_H 0x21U
 #define LSM_OUTX_L_G   0x22U
@@ -188,7 +193,7 @@ struct lsm_ctrl6_c
     enum lsm_ftype ftype : 3;        // полоса пропускания ФНЧ1 гироскопа
     uint8_t usr_off_w : 1;           // 0: бит регистра смещения акселерометра равен 2^-10 g; 1: 2^-6 g
     uint8_t xl_hm_mode : 1;          // выключение высокопроизводительного режима акселерометра
-    enum lsm_den_mode den_mode : 3;  // выбор режима триггера
+    enum lsm_den_mode den_mode : 3;  // выбор режима триггера сигнала DEN
 };
 
 enum __attribute__((packed)) lsm_hpm_g
@@ -240,34 +245,44 @@ enum __attribute__((packed)) lsm_hp_slope_xl
 /* Регистр управления 8 */
 struct lsm_ctrl8_xl
 {
-    uint8_t low_pass_on_6d : 1; // включение ФНЧ2 на пути данных в функцию 6D
+    uint8_t low_pass_on_6d : 1;  // включение ФНЧ2 на пути данных в функцию 6D
     uint8_t not_used_01 : 1;
-    enum lsm_hp_slope_xl hp_slope_xl : 6; // выбор полосы пропускания акселерометра
+    enum lsm_hp_slope_xl hp_slope_xl : 6;  // выбор полосы пропускания акселерометра
 };
 
+enum __attribute__((packed)) lsm_den_xl_g
+{
+    LSM_DEN_IN_GY_DATA = 0,
+    LSM_DEN_IN_XL_DATA = 1,
+    LSM_DEN_IN_GY_XL_DATA = 2,
+};
+
+/* Регистр управления 9 */
 struct lsm_ctrl9_xl
 {
     uint8_t not_used_01 : 1;
-    uint8_t i3c_disable : 1;
-    uint8_t den_lh : 1;
-    uint8_t den_xl_g : 2; /* den_xl_en + den_xl_g */
-    uint8_t den_z : 1;
-    uint8_t den_y : 1;
-    uint8_t den_x : 1;
+    uint8_t i3c_disable : 1;         // выключение протокола I3C
+    uint8_t den_lh : 1;              // выбор активного уровня сигнала DEN
+    enum lsm_den_xl_g den_xl_g : 2;  // выбор места сохранения сигнала DEN
+    uint8_t den_z : 1;               // включение сохранения сигнала DEN в данных оси Z
+    uint8_t den_y : 1;               // включение сохранения сигнала DEN в данных оси Y
+    uint8_t den_x : 1;               // включение сохранения сигнала DEN в данных оси Z
 };
 
+/* Регистр управления 10 */
 struct lsm_ctrl10_c
 {
     uint8_t not_used_01 : 5;
-    uint8_t timestamp_en : 1;
+    uint8_t timestamp_en : 1;  // Включить счетчик времени
     uint8_t not_used_02 : 2;
 };
 
+/* Регистр статуса */
 struct lsm_status_reg
 {
-    uint8_t xlda : 1;
-    uint8_t gda : 1;
-    uint8_t tda : 1;
+    uint8_t xlda : 1;  // флаг готовности новых данных акселерометра
+    uint8_t gda : 1;   // флаг готовности новых данных гироскопа
+    uint8_t tda : 1;   // флаг готовности новых данных датчика температуры
     uint8_t not_used_01 : 5;
 };
 
@@ -307,17 +322,33 @@ struct __attribute__((packed)) lsm_word_pac
 };
 static_assert(sizeof(struct lsm_word_pac) == 3, "lsm_word_pac size error");
 
+/**
+ * Функция записи регистра
+ * 
+ * \param pac указатель на структуру lsm_reg_pac с адресом и значением регистра
+ */
+static inline void lsm_write_reg(struct lsm_reg_pac *pac)
+{
+    spi_txrx(pac, sizeof(struct lsm_reg_pac));
+}
+
+/**
+ * Функция чтения регистра
+ * 
+ * \param pac указатель на структуру lsm_reg_pac с адресом и полем для значения
+ *            регистра
+ */
 static inline void lsm_read_reg(struct lsm_reg_pac *pac)
 {
     pac->addr |= 0x80;
     spi_txrx(pac, sizeof(struct lsm_reg_pac));
 }
 
-static inline void lsm_write_reg(struct lsm_reg_pac *pac)
-{
-    spi_txrx(pac, sizeof(struct lsm_reg_pac));
-}
-
+/**
+ * Функция чтения регистра данных (16 бит)
+ * 
+ * \param pac указатель на структуру lsm_word_pac с адресом и полем для данных
+ */
 static inline void lsm_read_word(struct lsm_word_pac *pac)
 {
     pac->addr |= 0x80;
