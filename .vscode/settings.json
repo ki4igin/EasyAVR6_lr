@@ -41,6 +41,7 @@
         "UDRIE",
         "URSEL",
         "USART",
-        "vect"
+        "vect",
+        "vfprt"
     ]
 }

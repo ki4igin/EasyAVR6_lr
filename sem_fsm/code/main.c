@@ -43,7 +43,16 @@ const enum state fsm_state_table[STATE_CNT][EVENT_CNT] PROGMEM = {
 
     [STATE_TEMP_SET][EVENT_BACK] = STATE_TEMP_SHOW};
 
-void(*fsm_action_table[STATE_CNT])() = {
+typedef void (*vfprt_t)(void);
+
+// void (*const fsm_action_table[STATE_CNT])(void) PROGMEM = {
+//     [STATE_TIME_SHOW] = time_show,
+//     [STATE_TIME_SET] = time_set,
+//     [STATE_TEMP_SHOW] = temp_show,
+//     [STATE_TEMP_SET] = temp_set,
+//     [STATE_HUM_SHOW] = hum_show,
+// };
+const vfprt_t fsm_action_table[STATE_CNT] PROGMEM = {
     [STATE_TIME_SHOW] = time_show,
     [STATE_TIME_SET] = time_set,
     [STATE_TEMP_SHOW] = temp_show,
@@ -183,7 +192,8 @@ static enum state fsm_next_state(enum state state_old, enum event event)
 
 void fsm_action(enum state state)
 {
-    fsm_action_table[state]();
+    vfprt_t func = (void (*)(void))pgm_read_word(&fsm_action_table[state]);
+    func();
 }
 
 int main(void)
@@ -191,6 +201,8 @@ int main(void)
     TIMSK |= (1 << TOIE2);
     TCCR2 = (1 << CS22) | (1 << CS21) | (1 << CS20);
     sei();
+
+    state = STATE_TIME_SHOW;
 
     while (1)
     {
