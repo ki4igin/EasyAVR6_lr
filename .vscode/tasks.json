@@ -32,6 +32,20 @@
             "problemMatcher": []
         },
         {
+            "label": "build sem_fsm",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "sem_fsm",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build lcd",
             "type": "shell",
             "command": "make",

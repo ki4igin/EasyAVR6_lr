@@ -10,6 +10,7 @@
                 "${workspaceFolder}/uart_328p/code/**",
                 "${workspaceFolder}/lcd/code/**",
                 "${workspaceFolder}/axe/code/**",
+                "${workspaceFolder}/sem_fsm/code/**",
                 "${workspaceFolder}/uart_buf/code/**"
             ],
             "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",
