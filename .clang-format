@@ -83,7 +83,7 @@ ExperimentalAutoDetectBinPacking: false
 #     SortPriority: 8
 # IncludeIsMainRegex: '(Test)?$'
 IndentCaseBlocks: false
-IndentCaseLabels: true
+IndentCaseLabels: false
 # IndentCaseLabels: false
 IndentExternBlock: false
 IndentPPDirectives: None
