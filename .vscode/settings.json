@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "инкрементирует",
+        "ПОВСТАРТ",
         "COMPA",
         "CPHA",
         "DDRA",
@@ -21,6 +22,7 @@
         "PORTD",
         "RXCIE",
         "RXEN",
+        "slar",
         "SPDR",
         "SPIF",
         "SPSR",
@@ -29,6 +31,16 @@
         "TIFR",
         "TIMSK",
         "TOIE",
+        "TWBR",
+        "TWCR",
+        "TWDR",
+        "TWEA",
+        "TWEN",
+        "TWIE",
+        "TWINT",
+        "TWSR",
+        "TWSTA",
+        "TWSTO",
         "TXEN",
         "txrx",
         "ubrr",
@@ -42,6 +54,7 @@
         "URSEL",
         "USART",
         "vect",
-        "vfprt"
+        "vfprt",
+        "vfptr"
     ]
 }
