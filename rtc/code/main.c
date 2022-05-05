@@ -1,14 +1,14 @@
-/*******************************************************************************
-Target:  RTC
-Device:  ATmega16;
-Board:   EasyAVR6;
-Clock:   ext.clock 8 MHz
-
-Программа считывает текущее время (минуты и секунды) из микросхемы часов
-реального времени PCF8583 и отображает его на дисплее LCD16x2 в формате "mm:ss".
-Обмен между микроконтроллером и часами реального времени осуществляется по
-интерфейсу i2c с частотой 100 кГц.
-*******************************************************************************/
+/**
+ * Target:  RTC
+ * Device:  ATmega16;
+ * Board:   EasyAVR6;
+ * Clock:   ext.clock 8 MHz
+ * 
+ * Программа считывает текущее время (минуты и секунды) из часов реального 
+ * времени PCF8583 и отображает его на дисплее LCD16x2 в формате "mm:ss".
+ * Обмен между микроконтроллером и часами реального времени осуществляется по
+ * интерфейсу i2c с частотой 100 кГц.
+ */
 
 #include <avr/interrupt.h>
 
@@ -17,10 +17,10 @@ Clock:   ext.clock 8 MHz
 #include "pcf8583.h"
 #include "lcd16x2.h"
 
-struct pcf_time time = {0};
+static struct pcf_time time = {0};
 
 /* Буфер для вывода времени на дисплей, формат вывода "mm:ss" */
-uint8_t lcd_buf[3 * sizeof(time) - 1] = {0};
+static uint8_t lcd_buf[3 * sizeof(time) - 1] = {0};
 
 /**
  * Функция преобразования структуры времени в строку в формате "mm:ss"
@@ -63,10 +63,9 @@ int main(void)
             pcf_read_time(&time);
         }
 
-        if (twi_status == TWI_RX_COMPLETE)
+        if (twi_status == TWI_STATUS_RX_COMPLETE)
         {
-            twi_status = TWI_READY;
-
+            twi_status = TWI_STATUS_READY;
             time2str(&time, lcd_buf);
             lcd_mov_cursor(6);
             lcd_disp_buf(lcd_buf, sizeof(lcd_buf) / sizeof(lcd_buf[0]));

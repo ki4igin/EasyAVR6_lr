@@ -5,7 +5,7 @@
 
 #define LINE_FREQ 100000UL  // Частота обмена в Гц
 
-volatile enum twi_status twi_status = TWI_NOT_INIT;
+volatile enum twi_status twi_status = TWI_STATUS_NOT_INIT;
 
 static struct twi
 {
@@ -16,17 +16,17 @@ static struct twi
 } twi;
 
 /**
- * Функция инициализации модуля TWI
- * По окончанию инициализации устанавливается статус TWI_READY
- * Частота обмена в Гц: LINE_FREQ
- * Используется прерывание по событиям на шине TWI
+ * Функция инициализации модуля TWI.
+ * По окончанию инициализации устанавливается статус TWI_STATUS_READY.
+ * Частота обмена в Гц: LINE_FREQ.
+ * Используется прерывание по событиям на шине TWI.
  */
 void twi_init(void)
 {
     TWBR = (F_CPU / LINE_FREQ - 16) / 2;
     TWCR |= (1 << TWEN) | (1 << TWIE);
 
-    twi_status = TWI_READY;
+    twi_status = TWI_STATUS_READY;
 }
 
 /**
@@ -49,9 +49,9 @@ static inline void twi_txrx(
 }
 
 /**
- * Функция записи в регистр ведомого устройства
- * Во время записи устанавливается статус TWI_TX_BUSY, после записи 
- * устанавливается статус TWI_TX_COMPLETE
+ * Функция записи в регистр ведомого устройства.
+ * Во время записи устанавливается статус TWI_STATUS_TX_BUSY, после записи 
+ * устанавливается статус TWI_STATUS_TX_COMPLETE.
  * 
  * \param slaw адрес ведомого устройства SLA+W
  * \param reg_addr адрес начального регистра для записи
@@ -61,13 +61,13 @@ static inline void twi_txrx(
 void twi_write(uint8_t slaw, uint8_t reg_addr, uint8_t *buf, uint8_t size)
 {
     twi_txrx(slaw, reg_addr, buf, size);
-    twi_status = TWI_TX_BUSY;
+    twi_status = TWI_STATUS_TX_BUSY;
 }
 
 /**
- * Функция чтения из регистра ведомого устройства
- * Во время чтения устанавливается статус TWI_RX_BUSY, после чтения 
- * устанавливается статус TWI_RX_COMPLETE
+ * Функция чтения из регистра ведомого устройства.
+ * Во время чтения устанавливается статус TWI_STATUS_RX_BUSY, после чтения 
+ * устанавливается статус TWI_STATUS_RX_COMPLETE.
  * 
  * \param slaw адрес ведомого устройства SLA+W
  * \param reg_addr адрес начального регистра для чтения
@@ -77,7 +77,7 @@ void twi_write(uint8_t slaw, uint8_t reg_addr, uint8_t *buf, uint8_t size)
 void twi_read(uint8_t slaw, uint8_t reg_addr, uint8_t *buf, uint8_t size)
 {
     twi_txrx(slaw, reg_addr, buf, size);
-    twi_status = TWI_RX_BUSY;
+    twi_status = TWI_STATUS_RX_BUSY;
 }
 
 /* Конечный автомат линии TWI */
@@ -103,7 +103,7 @@ enum line_status
 static void line_error_stop(void)
 {
     TWCR |= (1 << TWSTO);
-    twi_status = TWI_ERROR;
+    twi_status = TWI_STATUS_ERROR;
 }
 
 static void line_send_slaw(void)
@@ -128,15 +128,15 @@ static void line_tx_data(void)
 {
     switch (twi_status)
     {
-    case TWI_RX_BUSY:
+    case TWI_STATUS_RX_BUSY:
         TWCR |= (1 << TWSTA);
         break;
-    case TWI_TX_BUSY:
+    case TWI_STATUS_TX_BUSY:
         TWDR = *twi.data++;
         if (twi.count-- == 0)
         {
             TWCR |= (1 << TWSTO);
-            twi_status = TWI_TX_COMPLETE;
+            twi_status = TWI_STATUS_TX_COMPLETE;
         }
         break;
     default:
@@ -166,7 +166,7 @@ static void line_rx_last_data(void)
 {
     *twi.data++ = TWDR;
     TWCR |= (1 << TWSTO);
-    twi_status = TWI_RX_COMPLETE;
+    twi_status = TWI_STATUS_RX_COMPLETE;
 }
 
 typedef void (*vfptr_t)(void);

@@ -33,11 +33,11 @@ static inline void pcf_init(void)
     buf[4] = 4 * 32 + 5;
     twi_write(PCF_SLAW, PCF_SEC, buf, sizeof(buf));
 
-    while (twi_status != TWI_TX_COMPLETE)
+    while (twi_status != TWI_STATUS_TX_COMPLETE)
     {
         ;
     }
-    twi_status = TWI_READY;
+    twi_status = TWI_STATUS_READY;
 }
 
 /**

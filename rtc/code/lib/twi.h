@@ -5,13 +5,13 @@
 
 enum twi_status
 {
-    TWI_NOT_INIT = 0,
-    TWI_READY,
-    TWI_TX_BUSY,
-    TWI_TX_COMPLETE,
-    TWI_RX_BUSY,
-    TWI_RX_COMPLETE,
-    TWI_ERROR,
+    TWI_STATUS_NOT_INIT = 0,
+    TWI_STATUS_READY,
+    TWI_STATUS_TX_BUSY,
+    TWI_STATUS_TX_COMPLETE,
+    TWI_STATUS_RX_BUSY,
+    TWI_STATUS_RX_COMPLETE,
+    TWI_STATUS_ERROR,
 };
 
 extern volatile enum twi_status twi_status;
