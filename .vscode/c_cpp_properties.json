@@ -1,29 +1,283 @@
 {
+    "env": {
+        "gccPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc",
+        "gccArgs": [
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-fpack-struct",
+            "-fshort-enums",
+            "-mshort-calls",
+            "-std=gnu11",
+            "-Winline",
+            "-Wall",
+            "-Wextra",
+            "-MMD",
+            "-MP"
+        ]
+    },
     "configurations": [
         {
-            "name": "avr-gcc",
+            "name": "counter",
             "includePath": [
-                "${workspaceFolder}/counter/code/**",
-                "${workspaceFolder}/timers/code/**",
-                "${workspaceFolder}/test/code/**",
-                "${workspaceFolder}/uart/code/**",
-                "${workspaceFolder}/uart_328p/code/**",
-                "${workspaceFolder}/lcd/code/**",
-                "${workspaceFolder}/axe/code/**",
-                "${workspaceFolder}/sem_fsm/code/**",
-                "${workspaceFolder}/rtc/code/**",
-                "${workspaceFolder}/uart_buf/code/**"
+                "${workspaceFolder}/counter/code/**"
             ],
-            "compilerPath": "C:/toolchain/avr8/avr8-gnu-toolchain/bin/avr-gcc.exe",
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
             "defines": [
                 "__AVR_ATmega16__",
-                // "__AVR_ATmega328P__",
-                "F_CPU = 8000000UL"
+                "DEBUG",
+                "F_CPU=8000000UL"
             ],
             "cStandard": "gnu11",
             "intelliSenseMode": "gcc-x64",
             "browse": {
-                "limitSymbolsToIncludedHeaders": true
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/counter/code/"
+                ]
+            }
+        },
+        {
+            "name": "timers",
+            "includePath": [
+                "${workspaceFolder}/timers/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/timers/code/"
+                ]
+            }
+        },
+        {
+            "name": "uart",
+            "includePath": [
+                "${workspaceFolder}/uart/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/uart/code/"
+                ]
+            }
+        },
+        {
+            "name": "uart_buf",
+            "includePath": [
+                "${workspaceFolder}/uart_buf/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/uart_buf/code/"
+                ]
+            }
+        },
+        {
+            "name": "uart_328p",
+            "includePath": [
+                "${workspaceFolder}/uart_328p/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "DEBUG",
+                "__AVR_ATmega328P__",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/uart_328p/code/"
+                ]
+            }
+        },
+        {
+            "name": "lcd",
+            "includePath": [
+                "${workspaceFolder}/lcd/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/lcd/code/"
+                ]
+            }
+        },
+        {
+            "name": "axe",
+            "includePath": [
+                "${workspaceFolder}/axe/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/axe/code/"
+                ]
+            }
+        },
+        {
+            "name": "sem_fsm",
+            "includePath": [
+                "${workspaceFolder}/sem_fsm/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/sem_fsm/code/"
+                ]
+            }
+        },
+        {
+            "name": "rtc",
+            "includePath": [
+                "${workspaceFolder}/rtc/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/rtc/code/"
+                ]
+            }
+        },
+        {
+            "name": "uart_fifo",
+            "includePath": [
+                "${workspaceFolder}/uart_fifo/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/uart_fifo/code/"
+                ]
+            }
+        },
+        {
+            "name": "test",
+            "includePath": [
+                "${workspaceFolder}/test/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/test/code/"
+                ]
             }
         }
     ],

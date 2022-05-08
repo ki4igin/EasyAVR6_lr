@@ -4,151 +4,29 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "${command:cpptools.activeConfigName}",
+                "GCC_PATH=C:/toolchain/avr8/avr8-gnu-toolchain/bin",
+                "DEBUG=1",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build all",
             "type": "shell",
             "command": "make",
             "args": [
                 "all",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build counter",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "counter",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build rtc",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "rtc",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build sem_fsm",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "sem_fsm",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build lcd",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "lcd",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build timers",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "timers",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build axe",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "axe",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build uart",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "uart",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build uart_328p",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "uart_328p",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build uart_buf",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "uart_buf",
-                "-s"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build test",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "test",
+                "GCC_PATH=C:/toolchain/avr8/avr8-gnu-toolchain/bin",
+                "DEBUG=1",
                 "-s"
             ],
             "group": {
@@ -159,6 +37,20 @@
         },
         {
             "label": "clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "${command:cpptools.activeConfigName}_clean",
+                "-s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clean all",
             "type": "shell",
             "command": "make",
             "args": [

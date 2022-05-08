@@ -1,11 +1,11 @@
 ###############################################################################
 # Settings
 ###############################################################################
-GCC_PATH := C:/toolchain/avr8/avr8-gnu-toolchain/bin
-# GCC_PATH := C:/toolchain/avr-gcc-9.2.0-x64-mingw/bin
-# GCC_PATH := C:/toolchain/avr-gcc-11.1.0-x64-windows/bin
-DEBUG := 1
+ifndef GCC_PATH
+GCC_PATH:= C:/toolchain/avr8/avr8-gnu-toolchain/bin
+endif
 PROJECTS := counter timers uart uart_buf test lcd uart_328p axe sem_fsm rtc
+PROJECTS += uart_fifo
 
 
 ###############################################################################
