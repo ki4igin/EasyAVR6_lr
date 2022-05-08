@@ -104,7 +104,6 @@ static_assert(sizeof(get_str(dssd)) == 5, "error");
 
 #define qwerty(...) (1, ##__VA_ARGS__)  // ## нужно для работы макроса без аругументов, экранируется запятая
 
-
 /**
  * PB7(SCK), PB5(MOSI), PB0(SS) - выходы (SS устанавливается в лог. 1)
  * PB6(MISO) - вход
