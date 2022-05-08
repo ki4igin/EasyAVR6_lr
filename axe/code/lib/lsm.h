@@ -309,16 +309,20 @@ struct lsm_reg_pac
     union lsm_reg reg;
 };
 
-struct lsm_word
+union lsm_word
 {
-    uint8_t l;
-    uint8_t h;
+    struct
+    {
+        uint8_t l;
+        uint8_t h;
+    };
+    int16_t word;
 };
 
 struct __attribute__((packed)) lsm_word_pac
 {
     uint8_t addr;
-    struct lsm_word data;
+    union lsm_word data;
 };
 static_assert(sizeof(struct lsm_word_pac) == 3, "lsm_word_pac size error");
 
