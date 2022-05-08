@@ -9,8 +9,6 @@
 
 fifo_declarate(uart_fifo, 256);
 
-// static_assert(sizeof(uart_fifo) == 3, "Error on size uart_fifo");
-
 void uart_init()
 {
     PORTD |= (1 << PD0);
