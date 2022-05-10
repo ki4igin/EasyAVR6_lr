@@ -5,7 +5,7 @@ ifndef GCC_PATH
 GCC_PATH:= C:/toolchain/avr8/avr8-gnu-toolchain/bin
 endif
 PROJECTS := counter timers uart uart_buf test lcd uart_328p axe sem_fsm rtc
-PROJECTS += uart_fifo
+PROJECTS += uart_fifo adc
 
 
 ###############################################################################

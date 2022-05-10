@@ -257,6 +257,30 @@
             }
         },
         {
+            "name": "adc",
+            "includePath": [
+                "${workspaceFolder}/adc/code/**"
+            ],
+            "compilerPath": "${gccPath}",
+            "compilerArgs": [
+                "-mmcu=atmega16",
+                "${gccArgs}"
+            ],
+            "defines": [
+                "__AVR_ATmega16__",
+                "DEBUG",
+                "F_CPU=8000000UL"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/adc/code/"
+                ]
+            }
+        },
+        {
             "name": "test",
             "includePath": [
                 "${workspaceFolder}/test/code/**"
