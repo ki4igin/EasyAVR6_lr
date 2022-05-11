@@ -16,15 +16,18 @@
  *      1 стоп-бит,
  *      бит паритета – нет.
  */
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
 #include "main.h"
 #include "lcd16x2.h"
 #include "converters.h"
+#include "uart.h"
 
 #define NBUF_LCD 5
+
+#define PAC_HEAD 0x03
+#define PAC_END  (~PAC_HEAD)
 
 uint8_t lcd_buf[NBUF_LCD] = {0};
 
@@ -42,21 +45,9 @@ int main(void)
      */
     OCR1B = 0x7A10;
     OCR1A = 0x7A12;
-    TCCR1B = (1 << WGM12) | (1 << CS12);
+    TCCR1B = (1 << WGM12) | (1 << CS10);
 
-    /**
-     * Инициализация UART, включение приемника и передатчика
-     * Скорость обмена: 19200 бод, 8 бит данных, 1 стоп-бит, бит паритета: нет
-     * Разрешение прерывания по приему
-     * PD0(RXD) - вход с PullUp, PD1(TXD) - выход
-     */
-    PORTD |= (1 << PD0);
-
-    uint16_t ubrr = F_CPU / (16UL * 19200) - 1;
-    UBRRH = (uint8_t)(ubrr >> 8);
-    UBRRL = (uint8_t)ubrr;
-    UCSRC |= (1 << URSEL) | (1 << UCSZ0) | (1 << UCSZ1);
-    UCSRB |= (1 << RXCIE) | (1 << RXEN) | (1 << TXEN);
+    uart_init();
 
     /**
      * Инициализация и включение АЦП
@@ -81,14 +72,21 @@ int main(void)
         {
             flags.adc_conv_complete = 0;
 
-            if (UCSRA & (1 << UDRE))
-            {
-                UDR = adc_data;
-            }
+            uint8_t buf[] = {
+                PAC_HEAD,
+                adc_data,
+                0x00,
+                PAC_END};
 
-            uint2str(adc_data, lcd_buf);
-            lcd_mov_cursor(6);
-            lcd_disp_buf(lcd_buf, sizeof(lcd_buf));
+            uart_send_array(buf, sizeof(buf));
+
+            static uint8_t cnt;
+            if (cnt++ == 0)
+            {
+                uint2str(adc_data, lcd_buf);
+                lcd_mov_cursor(6);
+                lcd_disp_buf(lcd_buf, sizeof(lcd_buf));
+            }
         }
     }
 }
