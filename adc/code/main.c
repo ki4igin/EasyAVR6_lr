@@ -86,10 +86,7 @@ int main(void)
                 UDR = adc_data;
             }
 
-            // Преобразование значения АЦП в массив символов
             uint2str(adc_data, lcd_buf);
-
-            // Установка позиции курсора дисплея и отображение массива на дисплее
             lcd_mov_cursor(6);
             lcd_disp_buf(lcd_buf, sizeof(lcd_buf));
         }
