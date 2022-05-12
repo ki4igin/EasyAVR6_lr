@@ -29,7 +29,7 @@
 #define PAC_HEAD 0x03
 #define PAC_END  (~PAC_HEAD)
 
-uint8_t lcd_buf[NBUF_LCD] = {0};
+// uint8_t lcd_buf[NBUF_LCD] = {0};
 
 volatile struct user_flags flags;
 uint8_t adc_data;
@@ -83,6 +83,7 @@ int main(void)
             static uint8_t cnt;
             if (cnt++ == 0)
             {
+                static uint8_t lcd_buf[NBUF_LCD] = {0};
                 uint2str(adc_data, lcd_buf);
                 lcd_mov_cursor(6);
                 lcd_disp_buf(lcd_buf, sizeof(lcd_buf));
