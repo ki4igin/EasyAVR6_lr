@@ -1,9 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-#include <assert.h>
 
-// #include "fifo_func.h"
 #include "fifo.h"
 #include "uart.h"
 
@@ -33,12 +31,12 @@ void uart_send_word(uint16_t word)
     UCSRB |= (1 << UDRIE);
 }
 
-void uart_send_array(uint8_t *buf, uint8_t size)
+void uart_send_array(const uint8_t *buf, uint8_t size)
 {
-    for (uint8_t i = 0; i < size; i++)
+    do
     {
         fifo_push(&uart_fifo, *buf++);
-    }
+    } while (--size);    
     UCSRB |= (1 << UDRIE);
 }
 

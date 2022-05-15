@@ -12,8 +12,7 @@ ISR(ADC_vect)
     TIFR |= (1 << OCF1B);
 
     adc_data = ADCH;
-
-    flags.adc_conv_complete = 1;
+    flags.adc_data_rdy = 1;
 }
 
 /* End File */

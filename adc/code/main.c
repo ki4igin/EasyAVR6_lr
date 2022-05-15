@@ -5,12 +5,11 @@
  * Clock:   ext.clock 8 MHz
  * 
  * Программа оцифровывает аналоговый сигнал на входе PA0 (нулевой канал ADC)
- * с разрядностью 8 бит с частотой 1 Гц.
- * Результат преобразования в виде шестнадцатеричного числа отправляется на ПК
- * интерфейсу UART и в виде десятичного числа отображается на LCD16x2 с
- * указанием номера канала АЦП.
+ * с разрядностью 8 бит с частотой 10 Гц.
+ * Результат преобразования отправляется на ПК интерфейсу UART и отображается в
+ * виде десятичного числа отображается на LCD16x2 с указанием номера канала АЦП.
  * 
- * Основные параметры UART:
+ * Параметры UART:
  *      скорость обмена 19200 бод,
  *      8 бит данных,
  *      1 стоп-бит,
@@ -24,12 +23,15 @@
 #include "converters.h"
 #include "uart.h"
 
-#define NBUF_LCD 5
-
-#define PAC_HEAD 0x03
-#define PAC_END  (~PAC_HEAD)
-
-// uint8_t lcd_buf[NBUF_LCD] = {0};
+struct uart_pac
+{
+    const uint8_t head;
+    uint8_t adc0;
+    const uint8_t end;
+} uart_pac = {
+    .head = 0x03,
+    .end = ~0x03
+};
 
 volatile struct user_flags flags;
 uint8_t adc_data;
@@ -43,9 +45,9 @@ int main(void)
      * Время переполнения:
      * t = 256 * 0x7A12 / 8e6 = 1 с; f = 8e6 / 256 / 0x7A12 = 1 Гц
      */
-    OCR1B = 0x7A10;
-    OCR1A = 0x7A12;
-    TCCR1B = (1 << WGM12) | (1 << CS10);
+    OCR1B = 12400;
+    OCR1A = 12500;
+    TCCR1B = (1 << WGM12) | (1 << CS11) | (1 << CS10);
 
     uart_init();
 
@@ -68,22 +70,17 @@ int main(void)
 
     while (1)
     {
-        if (flags.adc_conv_complete)
+        if (flags.adc_data_rdy)
         {
-            flags.adc_conv_complete = 0;
+            flags.adc_data_rdy = 0;
 
-            uint8_t buf[] = {
-                PAC_HEAD,
-                adc_data,
-                0x00,
-                PAC_END};
-
-            uart_send_array(buf, sizeof(buf));
+            uart_pac.adc0 = adc_data;
+            uart_send_array((uint8_t *)&uart_pac, sizeof(uart_pac));
 
             static uint8_t cnt;
-            if (cnt++ == 0)
+            if ((cnt++ & 0x07) == 0)
             {
-                static uint8_t lcd_buf[NBUF_LCD] = {0};
+                static uint8_t lcd_buf[5];
                 uint2str(adc_data, lcd_buf);
                 lcd_mov_cursor(6);
                 lcd_disp_buf(lcd_buf, sizeof(lcd_buf));

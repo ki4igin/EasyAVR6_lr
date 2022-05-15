@@ -3,12 +3,11 @@
 
 #include <avr/io.h>
 
-struct user_flags
+extern volatile struct user_flags
 {
-    uint8_t adc_conv_complete : 1;
-};
+    uint8_t adc_data_rdy : 1;
+} flags __attribute__((io(&EEDR)));
 
-extern volatile struct user_flags flags __attribute__((io(&EEDR)));;
 extern uint8_t adc_data;
 
 #endif
