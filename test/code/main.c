@@ -84,6 +84,11 @@ enum colors
 #undef X
 };
 
+#define BUILD_VER_NUM 257
+#define BUILD_COMMIT_NUM 0xC814655U
+
+#define VERSION_STR (BUILD_VER_NUM / 256)
+
 #define WARN_IF(EXP)                                \
     do                                              \
     {                                               \
@@ -92,7 +97,7 @@ enum colors
     }                                               \
     while (0)
 
-static_assert(sizeof(get_str(dssd)) == 5, "error");
+static_assert(sizeof(VERSION_STR) == 1, VERSION_STR);
 
 // static_assert(1 == 2, get_str1(__TIME__) "asdfd");
 
