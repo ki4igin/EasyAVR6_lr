@@ -12,7 +12,7 @@ ISR(TIMER2_OVF_vect)
     {
         OCR1BL++;
     }
-    else if (!(PIND & (1 << PIND1)) == 0)
+    else if ((PIND & (1 << PIND1)) == 0)
     {
         OCR1BL--;
     }
