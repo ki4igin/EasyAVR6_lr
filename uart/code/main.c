@@ -113,7 +113,7 @@ int main(void)
             tx.count = NBUF_RX;
             tx.data[0] = 0x80;
             tx.data[1] = PINA;
-            tx.data[2] = check_sum_calc(tx.data, NBUF_TX - 1);
+            tx.data[2] = checksum_calc(tx.data, NBUF_TX - 1);
 
             /* Запуск передачи (включение прерывания по опустошению РВВ UDR) */
             UCSRB |= (1 << UDRIE);
@@ -126,7 +126,7 @@ int main(void)
              * Если последний байт принятых данных равен контрольной сумме, то
              * копируем данные из буфера приема rx в буфер данных pac
              */
-            uint8_t check_sum = check_sum_calc(rx.data, NBUF_RX - 1);
+            uint8_t check_sum = checksum_calc(rx.data, NBUF_RX - 1);
 
             if (rx.data[NBUF_RX - 1] == check_sum)
             {
