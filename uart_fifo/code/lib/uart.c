@@ -7,7 +7,7 @@
 #include "fifo.h"
 #include "uart.h"
 
-fifo_declarate(uart_fifo, 256);
+fifo_declare(uart_fifo, 256);
 
 void uart_init()
 {
