@@ -13,10 +13,9 @@ ISR(TIMER2_OVF_vect)
         {
             flags.btn_lock = 1;
 
-            pac.num_byte++;
-            if (pac.num_byte >= NBUF_RX)
+            if (++disp_num_byte == NBUF_RX)
             {
-                pac.num_byte = 0;
+                disp_num_byte = 0;
             }
         }
     }
@@ -40,7 +39,7 @@ ISR(TIMER2_OVF_vect)
  */
 ISR(TIMER1_COMPA_vect)
 {
-    rx.count = 0;
+    buf_rx.count = 0;
     TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
 }
 
@@ -50,13 +49,13 @@ ISR(TIMER1_COMPA_vect)
  */
 ISR(TIMER0_OVF_vect)
 {
-    uint8_t temp = pac.data[pac.num_byte];
+    uint8_t temp = rx_data[disp_num_byte];
 
     uint8_t symbols[4] = {
         temp & 0x0F,
         temp >> 4,
         16,
-        pac.num_byte
+        disp_num_byte
     };
 
     sevseg_display_process(symbols);
@@ -66,22 +65,22 @@ ISR(TIMER0_OVF_vect)
 ISR(USART_RXC_vect)
 {
     /* Если принят первый байт, то начинаем формирование таймаута приема пакета */
-    if (rx.count == 0)
+    if (buf_rx.count == 0)
     {
         TCNT1 = 0;
         TCCR1B |= (1 << CS10);
     }
 
-    rx.data[rx.count++] = UDR;
+    buf_rx.data[buf_rx.count++] = UDR;
 
     /**
      * Если принят последний байт, то прекращаем формирование таймаута приема
      * пакета и устанавливаем флаг завершения приема пакета данных
      */
-    if (rx.count == NBUF_RX)
+    if (buf_rx.count == NBUF_RX)
     {
         TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
-        rx.count = 0;
+        buf_rx.count = 0;
         flags.rx_complete = 1;
     }
 }
@@ -89,9 +88,9 @@ ISR(USART_RXC_vect)
 /* Прерывание используется для передачи пакета данных */
 ISR(USART_UDRE_vect)
 {
-    UDR = tx.data[NBUF_TX - tx.count];    
+    UDR = buf_tx.data[NBUF_TX - buf_tx.count];    
     
-    if (--tx.count == 0)
+    if (--buf_tx.count == 0)
     {
         UCSRB &= ~(1 << UDRIE);
     }

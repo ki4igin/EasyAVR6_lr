@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include <avr/io.h>
+#include "buf.h"
 
 #define NBUF_TX 3
 #define NBUF_RX 4
@@ -13,23 +14,12 @@ extern struct user_flags
     uint8_t tx_req : 1;
 } flags;
 
-extern struct buf_tx
-{
-    uint8_t count;
-    uint8_t data[NBUF_TX];
-} tx;
+extern buf_declare(buf_tx, NBUF_TX);
+extern buf_declare(buf_rx, NBUF_RX);
 
-extern struct buf_rx
-{
-    uint8_t count;
-    uint8_t data[NBUF_RX];
-} rx;
 
-extern struct buf_pac
-{
-    uint8_t num_byte;
-    uint8_t data[NBUF_RX];
-} pac;
+extern uint8_t disp_num_byte;
+extern uint8_t rx_data[NBUF_RX];
 
 #endif
 
