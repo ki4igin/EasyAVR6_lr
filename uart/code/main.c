@@ -32,11 +32,12 @@
 
 struct user_flags flags = {0};
 
-struct buf_tx tx = {0};
-struct buf_rx rx = {0};
-struct buf_pac pac = {0};
+struct buf_tx buf_tx = {0};
+struct buf_rx buf_rx = {0};
 
-// Functions -------------------------------------------------------------------
+uint8_t disp_num_byte = 0;
+uint8_t rx_data[NBUF_RX] = {0};
+
 int main(void)
 {
     /**
@@ -110,10 +111,10 @@ int main(void)
              * 2-й байт: текущее состояния на выводах PA0...PA7,
              * 3-й байт: контрольная сумма.
              */
-            tx.count = NBUF_RX;
-            tx.data[0] = 0x80;
-            tx.data[1] = PINA;
-            tx.data[2] = checksum_calc(tx.data, NBUF_TX - 1);
+            buf_tx.count = NBUF_TX;
+            buf_tx.data[0] = 0x80;
+            buf_tx.data[1] = PINA;
+            buf_tx.data[2] = checksum_calc(buf_tx.data, NBUF_TX - 1);
 
             /* Запуск передачи (включение прерывания по опустошению РВВ UDR) */
             UCSRB |= (1 << UDRIE);
@@ -122,17 +123,11 @@ int main(void)
         {
             flags.rx_complete = 0;
 
-            /**
-             * Если последний байт принятых данных равен контрольной сумме, то
-             * копируем данные из буфера приема rx в буфер данных pac
-             */
-            uint8_t check_sum = checksum_calc(rx.data, NBUF_RX - 1);
-
-            if (rx.data[NBUF_RX - 1] == check_sum)
+            if (checksum_is_valid(buf_rx.data, NBUF_RX))
             {
                 for (uint8_t i = 0; i < NBUF_RX; i++)
                 {
-                    pac.data[i] = rx.data[i];
+                    rx_data[i] = buf_rx.data[i];
                 }
             }
         }
