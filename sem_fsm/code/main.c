@@ -192,7 +192,7 @@ static enum state fsm_next_state(enum state state_old, enum event event)
 
 void fsm_action(enum state state)
 {
-    vfprt_t func = (void (*)(void))pgm_read_word(&fsm_action_table[state]);
+    vfprt_t func = (vfprt_t)pgm_read_word(&fsm_action_table[state]);
     func();
 }
 
