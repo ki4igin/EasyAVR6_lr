@@ -26,7 +26,7 @@
  * 
  * \return идентификатор
  */
-static uint8_t read_id()
+static uint8_t read_id(void)
 {
     struct lsm_reg_pac pac = {
         .addr = LSM_WHO_AM_I
