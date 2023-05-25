@@ -37,6 +37,7 @@ static inline uint8_t fifo_is_empty(struct fifo *id)
 {
     return id->head == id->tail;
 }
+
 static inline uint8_t fifo_is_full(struct fifo *id)
 {
     return ((id->head + 1) & id->mask) == id->tail;
